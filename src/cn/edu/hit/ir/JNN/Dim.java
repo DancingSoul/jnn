@@ -5,7 +5,9 @@ import java.util.List;
 
 public class Dim {
   final int JNN_MAX_TENSOR_DIM = 7;
-
+  public int d[] = new int[JNN_MAX_TENSOR_DIM];
+  public int nd;
+  public int bd;
   Dim(){} {
     nd = 0;
     bd = 1;
@@ -122,8 +124,4 @@ public class Dim {
     }
     return true;
   }
-
-  int d[] = new int[JNN_MAX_TENSOR_DIM];
-  int nd;
-  int bd;
 }
