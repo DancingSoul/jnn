@@ -12,7 +12,12 @@ public class Dim {
     nd = 0;
     bd = 1;
   }
-
+  Dim(Dim d_){
+	  nd = d_.nd;
+	  bd = d_.bd;
+	  for (int i = 0; i < nd; i++)
+		  d[nd] = d_.d[nd];
+  }
   Dim(List<Integer> x) {
     nd = 0;
     bd = 1;

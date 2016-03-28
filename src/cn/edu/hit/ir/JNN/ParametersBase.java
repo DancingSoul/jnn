@@ -23,8 +23,9 @@ class Parameters extends ParametersBase{
 	}
 	
 	Parameters(Dim d, double scale){
-		dim = d;
-		values.d = g.d = d;
+		dim = new Dim(d);
+		g.d = new Dim(d);
+		values.d = new Dim(d);
 		values.v = new DenseMatrix64F(d.size());
 		if (Math.abs(scale) < 1e-10 && Math.abs(scale) > -1e-10) {
 			TensorUtils.randomize(values, scale);
@@ -75,15 +76,15 @@ class LookupParameters extends ParametersBase{
 	}
 	
 	LookupParameters(int n, Dim d){
-		dim = d;
+		dim = new Dim(d);
 		values.setSize(n);
 		grads.setSize(n);
 		for (int i = 0; i < n; i++){
-			values.get(i).d = d;
+			values.get(i).d = new Dim(d);
 			values.get(i).v = new DenseMatrix64F(d.size());
 			TensorUtils.randomize(values.get(i));
 			
-			grads.get(i).d = d;
+			grads.get(i).d = new Dim(d);
 			grads.get(i).v = new DenseMatrix64F(d.size());
 			TensorUtils.zero(grads.get(i));
 		}

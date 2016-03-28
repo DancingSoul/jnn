@@ -21,7 +21,7 @@ public abstract class Node {
 	
 	public abstract Dim dimForward(final Vector <Dim> xs);
 	public abstract String asString(final Vector <String> args);
-	public abstract int auxStorageSize();
+	public int auxStorageSize() {return 0;};
 	
 	public abstract void forwardImpl(final Vector <Tensor> xs, Tensor fx);
 	
@@ -30,9 +30,9 @@ public abstract class Node {
 	
 	//?public abstract boolean supportsMultibatch(){return false;}
 	
-	public abstract void forward(final Vector <Tensor> xs, Tensor fx);
-	public abstract void backward(final Vector <Tensor> xs, 
-			final Tensor fx, final Tensor dEdf, int i, Tensor dEdxi);
+	public void forward(final Vector <Tensor> xs, Tensor fx) {}
+	public void backward(final Vector <Tensor> xs, 
+			final Tensor fx, final Tensor dEdf, int i, Tensor dEdxi) {}
 	
 	public final int arity(){return args.size();}
 	
@@ -40,3 +40,5 @@ public abstract class Node {
 
 	public Vector <Integer> args;
 }
+
+

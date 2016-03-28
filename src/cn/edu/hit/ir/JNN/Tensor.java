@@ -12,7 +12,7 @@ class Tensor implements Serializable {
 	}
 
 	Tensor(final Dim d_, final DenseMatrix64F v_) {
-		d = d_;
+		d = new Dim(d_);
 		v = v_;
 	}	
 	
