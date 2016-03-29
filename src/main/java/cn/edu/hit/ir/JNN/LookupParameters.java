@@ -18,13 +18,14 @@ class LookupParameters extends AbstractParameters {
 
   LookupParameters(int n, Dim d){
     dim = new Dim(d);
-    values.setSize(n);
-    grads.setSize(n);
+    values = new Vector<Tensor>(n);
+    grads = new Vector<Tensor>(n);
+
     for (int i = 0; i < n; i++){
-      values.set(i, new Tensor(new Dim(d), new DenseMatrix64F(d.size())));
+      values.add(i, new Tensor(d));
       TensorUtils.randomize(values.get(i));
 
-      grads.set(i, new Tensor(new Dim(d), new DenseMatrix64F(d.size())));
+      grads.add(i, new Tensor(d));
       TensorUtils.zero(grads.get(i));
     }
   }
