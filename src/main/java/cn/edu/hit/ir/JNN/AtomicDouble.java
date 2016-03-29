@@ -18,7 +18,7 @@ class AtomicDouble extends Number {
 
     public final boolean compareAndSet(double expect, double update) {
         return bits.compareAndSet(doubleToLongBits(expect),
-                                  doubleToLongBits(update));
+            doubleToLongBits(update));
     }
 
     public final void set(double newValue) {

@@ -8,14 +8,15 @@ import org.ejml.data.DenseMatrix64F;
 class Tensor implements Serializable {
 	public Dim d;
 	public DenseMatrix64F v;
+
 	Tensor() {
 	}
 
 	Tensor(final Dim d_, final DenseMatrix64F v_) {
 		d = new Dim(d_);
 		v = v_;
-	}	
-	
+	}
+
 	public boolean isValid() {
 		int s = d.size();
 		for (int i = 0; i < s; ++i) {

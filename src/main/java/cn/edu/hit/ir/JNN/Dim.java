@@ -6,18 +6,22 @@ import java.util.List;
 public class Dim {
   final int JNN_MAX_TENSOR_DIM = 7;
   public int d[] = new int[JNN_MAX_TENSOR_DIM];
-  public int nd;
-  public int bd;
+  public int nd; // number of dimensions
+  public int bd; // number of batches
+
   Dim(){} {
     nd = 0;
     bd = 1;
   }
+
   Dim(Dim d_){
 	  nd = d_.nd;
 	  bd = d_.bd;
-	  for (int i = 0; i < nd; i++)
-		  d[nd] = d_.d[nd];
+	  for (int i = 0; i < nd; i++) {
+      d[nd] = d_.d[nd];
+    }
   }
+
   Dim(List<Integer> x) {
     nd = 0;
     bd = 1;
@@ -86,7 +90,7 @@ public class Dim {
     return nd > 1 ? d[1] : 1;
   }
 
-  public final int batchElems() {
+  public final int batchElements() {
     return bd;
   }
 
@@ -98,7 +102,7 @@ public class Dim {
 
   public final int at(int i) {
     return i < nd ? d[i] : 1;
-  } //жиди[]
+  }
 
   public final int size(int i) {
     return this.at(i);
@@ -115,7 +119,8 @@ public class Dim {
     } else if (nd == 2) {
       return new Dim(Arrays.asList(d[1], d[0]), bd);
     }
-    throw new IllegalArgumentException("Cannot transpose Dim Object with more than 2 dimensions");
+    throw new IllegalArgumentException(
+        "Cannot transpose Dim Object with more than 2 dimensions");
   }
 
   public final boolean equals(final Dim b) {
