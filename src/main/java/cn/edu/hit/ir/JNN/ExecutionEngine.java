@@ -150,6 +150,5 @@ class SimpleExecutionEngine extends ExecutionEngine {
 		for (Integer i : cg.parameterNodes) 
 			((ParameterNodeBase)cg.nodes.get(i)).accumulateGrad(ndEdfs.get(i));
 	}
-		
 }
 
