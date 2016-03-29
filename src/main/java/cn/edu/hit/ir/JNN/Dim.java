@@ -1,43 +1,59 @@
-package main.java.cn.edu.hit.ir.JNN;
+package cn.edu.hit.ir.JNN;
 
 import java.util.Arrays;
 import java.util.List;
 
 public class Dim {
+  /**
+   * Dim is the class for storing the Dimension for a Tensor. Currently, only
+   * two dimension is actually supported in JNN.
+   */
   final int JNN_MAX_TENSOR_DIM = 7;
   public int d[] = new int[JNN_MAX_TENSOR_DIM];
   public int nd; // number of dimensions
   public int bd; // number of batches
 
-  Dim(){} {
+  Dim() {
     nd = 0;
     bd = 1;
   }
 
-  Dim(Dim d_){
-	  nd = d_.nd;
-	  bd = d_.bd;
-	  for (int i = 0; i < nd; i++) {
-		  d[nd] = d_.d[nd];
-    }
+  public Dim(Dim d_) {
+    nd = d_.nd;
+    bd = d_.bd;
+    System.arraycopy(d_.d, 0, d, 0, nd);
   }
 
-  Dim(List<Integer> x) {
+  public Dim(List<Integer> x) {
     nd = 0;
     bd = 1;
-    for (nd = 0; nd < x.size(); ++ nd) {
+    for (nd = 0; nd < x.size(); ++nd) {
       d[nd] = x.get(nd);
     }
   }
 
-  Dim(List<Integer> x, int b) {
+  public Dim(List<Integer> x, int b) {
     nd = 0;
     bd = b;
-    for (nd  = 0; nd < x.size(); ++nd) {
+    for (nd = 0; nd < x.size(); ++nd) {
       d[nd] = x.get(nd);
     }
   }
-  
+
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append(bd).append(" ").append("(");
+    if (nd > 0) {
+      for (int i = 0; i < nd; ++i) {
+        sb.append(d[i]);
+        sb.append(i + 1 < nd ? "," : ")");
+      }
+    } else {
+      sb.append(")");
+    }
+    return sb.toString();
+  }
+
   public final int size() {
     return batchSize() * bd;
   }
@@ -50,7 +66,7 @@ public class Dim {
     return p;
   }
 
-  public final int sumDims() {
+  public final int getSumDimensions() {
     int p = 0;
     for (int i = 0; i < nd; ++i) p += d[i];
     return p;
@@ -68,7 +84,8 @@ public class Dim {
     r.resize(m);
     return r;
   }
-  public final Dim singleBatch(){
+
+  public final Dim singleBatch() {
     Dim r = this;
     r.bd = 1;
     return r;
@@ -78,25 +95,25 @@ public class Dim {
     nd = i;
   }
 
-  public final int nDims() {
+  public final int getNumDimensions() {
     return nd;
   }
 
-  public final int rows() {
+  public final int getNumRows() {
     return d[0];
   }
 
-  public final int cols() {
+  public final int getNumCols() {
     return nd > 1 ? d[1] : 1;
   }
 
-  public final int batchElements() {
+  public final int getNumBatchElements() {
     return bd;
   }
 
   public final void set(int i, int s) {
-    assert(i < nd);
-    assert(s > 0);
+    assert (i < nd);
+    assert (s > 0);
     d[i] = s;
   }
 
@@ -109,7 +126,6 @@ public class Dim {
   }
 
   /**
-   *
    * @return
    */
   public final Dim transpose() {

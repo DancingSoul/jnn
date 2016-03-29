@@ -1,23 +1,46 @@
-package main.java.cn.edu.hit.ir.JNN;
+package cn.edu.hit.ir.JNN;
 
 import java.io.Serializable;
 import java.util.Arrays;
 
 import org.ejml.data.DenseMatrix64F;
 
-class Tensor implements Serializable {
-	public Dim d;
+public class Tensor implements Serializable {
+  /**
+   * Tensor is a wrapping class for access the Matrix.
+   *
+   * Tensor is used in:
+   *  - Parameters
+   *  - ComputationGraph
+   *
+   *  Currently, we suppose the number of dimension for the tensor is either 1 or 2
+   */
+  private static final long serialVersionUID = 2238574422776967031L;
+  public Dim d;
 	public DenseMatrix64F v;
 
 	Tensor() {
 	}
 
+  Tensor(final Dim d_) {
+    d = new Dim(d_);
+    v = new DenseMatrix64F(d_.at(0), d_.at(1));
+  }
+
 	Tensor(final Dim d_, final DenseMatrix64F v_) {
 		d = new Dim(d_);
-		v = v_;
+		v = new DenseMatrix64F(v_);
 	}
 
 	public boolean isValid() {
+    if (d == null || v == null) {
+      // should pay attention to the uninitialized tensor.
+      return false;
+    }
+    if (d.size() != v.getNumElements()) {
+      return false;
+    }
+
 		int s = d.size();
 		for (int i = 0; i < s; ++i) {
 			if (Double.isNaN(v.get(i)) || Double.isInfinite(v.get(i))) {
@@ -27,14 +50,8 @@ class Tensor implements Serializable {
 		return true;
 	}
 
-	public double toScalar(Tensor t) {
+	public static double toScalar(Tensor t) {
 		assert (t.d.size() == 1);
 		return t.v.get(0);
 	}
-
-	/*public static double[] toVector(Tensor t) {
-		float[] ret = null;
-		ret = Arrays.copyOf(t.v, t.d.size());
-		return ret;
-	}*/
 }
