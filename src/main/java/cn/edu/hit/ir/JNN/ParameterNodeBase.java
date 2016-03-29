@@ -1,4 +1,4 @@
-package cn.edu.hit.ir.JNN;
+package main.java.cn.edu.hit.ir.JNN;
 
 import java.util.Vector;
 
@@ -10,7 +10,6 @@ public abstract class ParameterNodeBase extends Node{
 
 class ParameterNode extends ParameterNodeBase {
 	ParameterNode(Parameters p) {
-		
 		
 	}
 	public String asString(final Vector<String> argNames) {
@@ -34,6 +33,41 @@ class ParameterNode extends ParameterNodeBase {
 	public void accumulateGrad(final Tensor g) {
 		params.accumulate_grad(g);
 	}
-	public Dim dimS;
+	public Dim dim;
 	public Parameters params;
 }
+
+class ConstParameterNode extends Node {
+	ConstParameterNode(Parameters p) {
+		dim = new Dim(p.dim);
+		params = p;
+	}
+	
+	public String asString(final Vector <String> argNames) {
+		//...
+		return "";		
+	}
+	public Dim dimForward(final Vector <Dim> xs) {
+		assert(xs.size() == 0);
+		return dim;
+	}
+	public void forwardImpl(final Vector <Tensor> xs, Tensor fx) {
+		assert(xs.size() == 0);
+		fx.v = params.values.v;
+	}
+	
+	public void backwardImpl(final Vector <Tensor> xs,
+			final Tensor fx, final Tensor dEdf, int i, Tensor dEdxi) {
+		//"called backward() on arity 0 node : i = ??
+		//abort();
+	}
+	
+	public Dim dim;
+	public Parameters params;
+}
+
+class InputNode extends Node {
+	
+	
+}
+

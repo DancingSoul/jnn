@@ -1,4 +1,4 @@
-package cn.edu.hit.ir.JNN;
+package main.java.cn.edu.hit.ir.JNN;
 
 import java.util.Arrays;
 import java.util.List;
@@ -18,7 +18,7 @@ public class Dim {
 	  nd = d_.nd;
 	  bd = d_.bd;
 	  for (int i = 0; i < nd; i++) {
-      d[nd] = d_.d[nd];
+		  d[nd] = d_.d[nd];
     }
   }
 

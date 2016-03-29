@@ -1,4 +1,4 @@
-package cn.edu.hit.ir.JNN;
+package main.java.cn.edu.hit.ir.JNN;
 
 import java.util.HashSet;
 import java.util.Vector;

@@ -1,9 +1,10 @@
-package cn.edu.hit.ir.JNN;
+package test.java.cn.edu.hit.ir.JNN;
 
-import static org.junit.Assert.assertEquals;
-import org.ejml.data.DenseMatrix64F;
-import org.junit.Test;
 import java.util.Arrays;
+
+import org.ejml.data.DenseMatrix64F;
+
+import main.java.cn.edu.hit.ir.JNN.Dim;
 
 /**
  * Created by yijia_liu on 3/29/2016.
