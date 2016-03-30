@@ -1,10 +1,9 @@
-package test.java.cn.edu.hit.ir.JNN;
+package cn.edu.hit.ir.JNN;
 
 import java.util.Arrays;
-
+import org.junit.Test;
+import org.junit.Assert;
 import org.ejml.data.DenseMatrix64F;
-
-import main.java.cn.edu.hit.ir.JNN.Dim;
 
 /**
  * Created by yijia_liu on 3/29/2016.
@@ -12,76 +11,91 @@ import main.java.cn.edu.hit.ir.JNN.Dim;
 public class TensorUtilsTest {
 
   @Test
-  public void constant() throws Exception {
+  public void testConstant() throws Exception {
     Tensor d = new Tensor(new Dim(Arrays.asList(100, 200), 1), new DenseMatrix64F(100, 200));
     TensorUtils.constant(d, 63d);
     // value of the tensor should be close to 63
-    assertEquals(63d, d.v.get(20, 10), 1e-8);
+    Assert.assertEquals(63d, d.v.get(20, 10), 1e-8);
   }
 
   @Test
-  public void zero() throws Exception {
+  public void testZero() throws Exception {
     Tensor d = new Tensor(new Dim(Arrays.asList(100, 200), 1), new DenseMatrix64F(100, 200));
     TensorUtils.zero(d);
-    assertEquals(0d, d.v.get(20, 10), 1e-8);
+    Assert.assertEquals(0d, d.v.get(20, 10), 1e-8);
   }
 
   @Test
-  public void randomize() throws Exception {
-
+  public void testRandomize() throws Exception {
+    Tensor d = new Tensor(new Dim(Arrays.asList(3, 4), 1), new DenseMatrix64F(3, 4));
+    System.out.println(d.v);
+    TensorUtils.randomize(d);
+    System.out.println(d.v);
   }
 
   @Test
-  public void randomize1() throws Exception {
-
+  public void testRandomize1() throws Exception {
+    // an empty tensor
+    //Tensor d = new Tensor();
+    //TensorUtils.randomize(d);
   }
 
   @Test
-  public void randomBernoulli() throws Exception {
-
-  }
-
-  @Test
-  public void randomizeNormal() throws Exception {
-
-  }
-
-  @Test
-  public void accessElement() throws Exception {
+  public void testRandomBernoulli() throws Exception {
 
   }
 
   @Test
-  public void accessElement1() throws Exception {
+  public void testRandomizeNormal() throws Exception {
+
+  }
+
+  @Test
+  public void testAccessElement() throws Exception {
+
+  }
+
+  @Test
+  public void testAccessElement1() throws Exception {
     Tensor d = new Tensor(new Dim(Arrays.asList(100, 200), 1), new DenseMatrix64F(100, 200));
     TensorUtils.constant(d, 63d);
-    assertEquals(63d, TensorUtils.accessElement(d, new Dim(Arrays.asList(99, 199), 1)), 1e-8);
+    Assert.assertEquals(63d, TensorUtils.accessElement(d, new Dim(Arrays.asList(99, 199), 1)), 1e-8);
     // following test is not adoptable because counting from 0
     // assertEquals(63d, TensorUtils.accessElement(d, new Dim(Arrays.asList(100, 200), 1)), 1e-8);
   }
 
   @Test
-  public void setElement() throws Exception {
+  public void testSetElement() throws Exception {
     Tensor d = new Tensor(new Dim(Arrays.asList(100, 200), 1), new DenseMatrix64F(100, 200));
     TensorUtils.zero(d);
 
     TensorUtils.setElement(d, 19, 63d);
-    assertEquals(63d, d.v.get(19), 1e-8);
+    Assert.assertEquals(63d, d.v.get(19), 1e-8);
 
     TensorUtils.setElement(d, 0, 63d);
-    assertEquals(63d, d.v.get(0, 0), 1e-8);
+    Assert.assertEquals(63d, d.v.get(0, 0), 1e-8);
 
     TensorUtils.setElement(d, 1, 63d);
-    assertEquals(63d, d.v.get(0, 1), 1e-8);
+    Assert.assertEquals(63d, d.v.get(0, 1), 1e-8);
   }
 
   @Test
-  public void setElements() throws Exception {
+  public void testSetElements() throws Exception {
 
   }
 
   @Test
-  public void copyElements() throws Exception {
+  public void testCopyElements() throws Exception {
+    Tensor d = new Tensor(new Dim(Arrays.asList(3, 4), 1), new DenseMatrix64F(3 ,4));
+    TensorUtils.constant(d, 10);
 
+    Tensor d2 = new Tensor(new Dim(Arrays.asList(3, 4), 1), new DenseMatrix64F(3 ,4));
+    int code = System.identityHashCode(d2.v);
+    TensorUtils.copyElements(d2, d);
+
+    // copy should be performed.
+    Assert.assertEquals(10d, d.v.get(0), 1e-8);
+    // copy should be done in place.
+    Assert.assertEquals(code, System.identityHashCode(d2.v));
   }
 }

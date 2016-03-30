@@ -1,4 +1,4 @@
-package main.java.cn.edu.hit.ir.JNN;
+package cn.edu.hit.ir.JNN;
 
 import java.util.List;
 import java.util.Random;
@@ -7,10 +7,13 @@ import java.util.Vector;
 import org.ejml.data.DenseMatrix64F;
 import org.ejml.ops.CommonOps;
 
-/**
- * a collection of utility functions for tensor.
- */
 class TensorUtils {
+  /**
+   * TensorUtils a collection of utility functions for tensor.
+   *
+   * TODO: currently, uninitialized Tensor is not check. Operating the uninitialized
+   * one will raise a nullpointer exception.
+   */
   public static void constant(Tensor d, double c) {
     CommonOps.fill(d.v, c);
   }
@@ -20,11 +23,12 @@ class TensorUtils {
   }
 
   public static void randomize(Tensor d) {
-    TensorUtils.randomize(d, (double)(Math.sqrt(6.d) / Math.sqrt(d.d.sumDims())));
+    TensorUtils.randomize(d, Math.sqrt(6.d) / Math.sqrt(d.d.getSumDimensions()));
   }
 
   public static void randomize(Tensor d, double scale) {
-    // TODO optimize this
+    // TODO: optimize this, random generator should be obtained from a global
+    // random number generator.
     Random rand = new Random();
     for (int i = 0; i < d.d.size(); ++i) {
       d.v.set(i, rand.nextFloat() * scale);
@@ -54,12 +58,11 @@ class TensorUtils {
     for (int i = 0; i < vec.size(); i++) {
        d.v.set(i, vec.get(i));
     }
-    // memcpy(v.v, &vec[0], sizeof(real) * vec.size());
   }
 
-  public static void copyElements(final Tensor d, final Tensor src) {
+  public static void copyElements(final Tensor tgt, final Tensor src) {
     for (int i = 0; i < src.v.getNumElements(); ++i) {
-      d.v.set(i, src.v.get(i));
+      tgt.v.set(i, src.v.get(i));
     }
   }
 }
