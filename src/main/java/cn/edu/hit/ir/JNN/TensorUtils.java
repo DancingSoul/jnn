@@ -2,12 +2,10 @@ package cn.edu.hit.ir.JNN;
 
 import java.util.List;
 import java.util.Random;
-import java.util.Vector;
 
-import org.ejml.data.DenseMatrix64F;
 import org.ejml.ops.CommonOps;
 
-class TensorUtils {
+public class TensorUtils {
   /**
    * TensorUtils a collection of utility functions for tensor.
    *
@@ -64,5 +62,10 @@ class TensorUtils {
     for (int i = 0; i < src.v.getNumElements(); ++i) {
       tgt.v.set(i, src.v.get(i));
     }
+  }
+  
+  public static double toScalar(Tensor t) {
+    assert (t.d.size() == 1);
+    return t.v.get(0);
   }
 }

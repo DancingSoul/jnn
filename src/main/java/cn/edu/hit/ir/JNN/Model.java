@@ -5,8 +5,15 @@ import java.util.Vector;
 
 public class Model implements Serializable {
   private static final long serialVersionUID = 83645026291628434L;
-
-  Model() {
+  
+  private Vector<AbstractParameters> allParams;
+  private Vector<Parameters> params;
+  private Vector<LookupParameters> lookupParams;
+  private Double[] gradientNormScratch;
+  private static Double[] projectScratch;
+  
+  
+  public Model() {
     allParams = new Vector<AbstractParameters>();
     params = new Vector<Parameters>();
     lookupParams = new Vector<LookupParameters>();
@@ -37,6 +44,10 @@ public class Model implements Serializable {
     }
   }
 
+  public Parameters addParameters(final Dim d) {
+    return this.addParameters(d, 0.0);
+  }
+  
   public Parameters addParameters(final Dim d, double scale) {
     Parameters p = new Parameters(d, scale);
     allParams.addElement(p);
@@ -51,6 +62,10 @@ public class Model implements Serializable {
     return p;
   }
 
+  public void projectWeights() {
+    this.projectWeights(1.0);
+  }
+  
   public void projectWeights(double radius) {
     if (projectScratch.length == 0) {
       projectScratch = new Double[allParams.size()];
@@ -79,9 +94,5 @@ public class Model implements Serializable {
     return lookupParams;
   }
 
-  private Vector<AbstractParameters> allParams;
-  private Vector<Parameters> params;
-  private Vector<LookupParameters> lookupParams;
-  private Double[] gradientNormScratch;
-  private static Double[] projectScratch;
+
 }

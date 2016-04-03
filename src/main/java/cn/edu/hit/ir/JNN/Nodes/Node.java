@@ -1,23 +1,19 @@
 package cn.edu.hit.ir.JNN.Nodes;
 
-import cn.edu.hit.ir.JNN.Dim;
-import cn.edu.hit.ir.JNN.Tensor;
-
 import java.util.List;
 import java.util.Vector;
 
+import cn.edu.hit.ir.JNN.Dim;
+import cn.edu.hit.ir.JNN.Tensor;
+
 public abstract class Node {
   Node() {
+    dim = new Dim();
+    args = new Vector<Integer>();
   }
 
-  Node(List<Integer> x) {
-    args.setSize(x.size());
-    for (int i = 0; i < x.size(); i++) {
-      args.setElementAt(x.get(i), i);
-    }
-  }
-
-  Node(Vector<Integer> x) {
+  public Node(List<Integer> x) {
+    dim = new Dim();
     args.setSize(x.size());
     for (int i = 0; i < x.size(); i++) {
       args.setElementAt(x.get(i), i);
@@ -37,14 +33,22 @@ public abstract class Node {
   public abstract void backwardImpl(final Vector<Tensor> xs,
                                     final Tensor fx, final Tensor dEdf, int i, Tensor dEdxi);
 
-  //?public abstract boolean supportsMultibatch(){return false;}
+  public boolean supportsMultibatch(){return false;}
 
   public void forward(final Vector<Tensor> xs, Tensor fx) {
-
+    if (this.supportsMultibatch() || fx.d.getNumBatchElements() == 1) {
+      forwardImpl(xs, fx);
+    } else {
+      //...  
+    }
   }
 
   public void backward(final Vector<Tensor> xs, final Tensor fx, final Tensor dEdf, int i, Tensor dEdxi) {
-
+    if (this.supportsMultibatch() || fx.d.getNumBatchElements() == 1) {
+      backwardImpl(xs, fx, dEdf, i, dEdxi);
+    } else {
+      //...
+    }
   }
 
   public final int arity() {

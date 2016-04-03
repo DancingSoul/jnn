@@ -1,10 +1,11 @@
 package cn.edu.hit.ir.JNN;
 
-import static java.lang.Double.*;
+import static java.lang.Double.doubleToLongBits;
+import static java.lang.Double.longBitsToDouble;
 
 import java.util.concurrent.atomic.AtomicLong;
 
-class AtomicDouble extends Number {
+public class AtomicDouble extends Number {
   private AtomicLong bits;
 
   public AtomicDouble() {

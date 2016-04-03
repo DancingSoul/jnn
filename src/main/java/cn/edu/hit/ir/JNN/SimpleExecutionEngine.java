@@ -12,11 +12,14 @@ class SimpleExecutionEngine extends AbstractExecutionEngine {
   int numNodesEvaluated;
 
   SimpleExecutionEngine() {
-
+      nfxs = new Vector<Tensor>();
+      ndEdfs = new Vector<Tensor>();
   }
 
   public SimpleExecutionEngine(final ComputationGraph cg_) {
     cg = cg_;
+    nfxs = new Vector<Tensor>();
+    ndEdfs = new Vector<Tensor>();
   }
 
   public void invalidate() {
@@ -78,8 +81,8 @@ class SimpleExecutionEngine extends AbstractExecutionEngine {
     assert (fromWhere + 1 <= nfxs.size());
     assert (fromWhere + 1 <= cg.nodes.size());
     if (nfxs.get(fromWhere).d.size() != 1) {
-      //backward() called on non-scalar node.
-      //abort();
+      throw new RuntimeException(
+          "called backward() on non-scalar node");
     }
 
     int numNodes = fromWhere + 1;

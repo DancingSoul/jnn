@@ -6,8 +6,8 @@ import cn.edu.hit.ir.JNN.Tensor;
 
 import java.util.Vector;
 
-class ConstParameterNode extends Node {
-  ConstParameterNode(Parameters p) {
+public class ConstParameterNode extends Node {
+  public ConstParameterNode(Parameters p) {
     dim = new Dim(p.dim);
     params = p;
   }
@@ -29,8 +29,8 @@ class ConstParameterNode extends Node {
 
   public void backwardImpl(final Vector<Tensor> xs,
                            final Tensor fx, final Tensor dEdf, int i, Tensor dEdxi) {
-    //"called backward() on arity 0 node : i = ??
-    //abort();
+    throw new RuntimeException(
+        "called backward() on a arity 0 node");
   }
 
   public Dim dim;

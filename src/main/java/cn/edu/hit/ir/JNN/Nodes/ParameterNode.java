@@ -5,9 +5,10 @@ import cn.edu.hit.ir.JNN.Tensor;
 import cn.edu.hit.ir.JNN.Parameters;
 import java.util.Vector;
 
-class ParameterNode extends AbstractParameterNode {
-  ParameterNode(Parameters p) {
-
+public class ParameterNode extends AbstractParameterNode {
+  public ParameterNode(Parameters p) {
+      params = p;
+      dim = new Dim(p.dim);
   }
 
   public Dim dimForward(Vector<Dim> xs) {
@@ -27,8 +28,8 @@ class ParameterNode extends AbstractParameterNode {
 
   public void backwardImpl(final Vector<Tensor> xs,
                            final Tensor fx, final Tensor dEdf, int i, Tensor dEdxi) {
-    //"called backward() on arity 0 node : i = ??
-    //abort();
+    throw new RuntimeException(
+        "called backward() on a arity 0 node");
   }
 
   public void accumulateGrad(Tensor g) {

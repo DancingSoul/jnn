@@ -13,7 +13,7 @@ public class Dim {
   public int nd; // number of dimensions
   public int bd; // number of batches
 
-  Dim() {
+  public Dim() {
     nd = 0;
     bd = 1;
   }

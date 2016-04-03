@@ -7,19 +7,24 @@ import org.ejml.ops.NormOps;
 import java.util.HashSet;
 import java.util.Vector;
 
-class LookupParameters extends AbstractParameters {
+public class LookupParameters extends AbstractParameters {
   public Dim dim;
   public Vector<Tensor> values;
   public Vector<Tensor> grads;
   public HashSet<Integer> nonZeroGrads;
 
   LookupParameters() {
+    dim = new Dim();
+    values = new Vector<Tensor>();
+    grads = new Vector<Tensor>();
+    nonZeroGrads = new HashSet<Integer>();
   }
 
   LookupParameters(int n, Dim d){
     dim = new Dim(d);
     values = new Vector<Tensor>(n);
     grads = new Vector<Tensor>(n);
+    nonZeroGrads = new HashSet<Integer>();
 
     for (int i = 0; i < n; i++){
       values.add(i, new Tensor(d));

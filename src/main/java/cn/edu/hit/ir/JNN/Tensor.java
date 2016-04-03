@@ -1,7 +1,6 @@
 package cn.edu.hit.ir.JNN;
 
 import java.io.Serializable;
-import java.util.Arrays;
 
 import org.ejml.data.DenseMatrix64F;
 
@@ -20,6 +19,8 @@ public class Tensor implements Serializable {
 	public DenseMatrix64F v;
 
 	Tensor() {
+	  d = new Dim();
+	  v = new DenseMatrix64F();
 	}
 
   Tensor(final Dim d_) {
@@ -50,8 +51,5 @@ public class Tensor implements Serializable {
 		return true;
 	}
 
-	public static double toScalar(Tensor t) {
-		assert (t.d.size() == 1);
-		return t.v.get(0);
-	}
+
 }
