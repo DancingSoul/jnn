@@ -14,7 +14,7 @@ public class Parameters extends AbstractParameters {
     g = new Tensor();
   }
 
-  Parameters(Dim d, double scale){
+  public Parameters(Dim d, double scale){
     dim = new Dim(d);
     values = new Tensor(d);
     g = new Tensor(d);

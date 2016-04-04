@@ -73,7 +73,7 @@ public class Dim {
   }
 
   public final Dim truncate() {
-    Dim r = this;
+    Dim r = new Dim(this);
     int m = 1;
     int s = size();
     for (int i = 1; i < s; ++i) {
@@ -86,7 +86,7 @@ public class Dim {
   }
 
   public final Dim singleBatch() {
-    Dim r = this;
+    Dim r = new Dim(this);
     r.bd = 1;
     return r;
   }
@@ -149,5 +149,22 @@ public class Dim {
       }
     }
     return true;
+  }
+
+  // Creator
+  public static Dim create(int d1) {
+    return new Dim(Arrays.asList(d1));
+  }
+
+  public static Dim create(int d1, int d2) {
+    return new Dim(Arrays.asList(d1, d2));
+  }
+
+  public static Dim createBatches(int d1, int n) {
+    return new Dim(Arrays.asList(d1), n);
+  }
+
+  public static Dim createBatches(int d1, int d2, int n) {
+    return new Dim(Arrays.asList(d1, d2), n);
   }
 }

@@ -12,14 +12,16 @@ class SimpleExecutionEngine extends AbstractExecutionEngine {
   int numNodesEvaluated;
 
   SimpleExecutionEngine() {
-      nfxs = new Vector<Tensor>();
-      ndEdfs = new Vector<Tensor>();
+    nfxs = new Vector<Tensor>();
+    ndEdfs = new Vector<Tensor>();
+    numNodesEvaluated = 0;
   }
 
   public SimpleExecutionEngine(final ComputationGraph cg_) {
     cg = cg_;
     nfxs = new Vector<Tensor>();
     ndEdfs = new Vector<Tensor>();
+    numNodesEvaluated = 0;
   }
 
   public void invalidate() {
@@ -61,11 +63,12 @@ class SimpleExecutionEngine extends AbstractExecutionEngine {
         xs.setSize(node.arity());
         int ai = 0;
         for (Integer arg : node.args) {
-          xs.set(ai, nfxs.get(arg));
+          xs.add(ai, nfxs.get(arg));
           ++ai;
         }
-        nfxs.get(numNodesEvaluated).d = node.dim;
-        nfxs.get(numNodesEvaluated).v = new DenseMatrix64F(node.dim.size());
+        nfxs.add(numNodesEvaluated, new Tensor(node.dim));
+        // nfxs.get(numNodesEvaluated).d = node.dim;
+        // nfxs.get(numNodesEvaluated).v = new DenseMatrix64F(node.dim.size());
         node.forward(xs, nfxs.get(numNodesEvaluated));
       }
     }

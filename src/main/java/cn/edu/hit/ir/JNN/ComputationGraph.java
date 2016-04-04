@@ -13,9 +13,7 @@ import cn.edu.hit.ir.JNN.Nodes.ParameterNode;
 import cn.edu.hit.ir.JNN.Nodes.ScalarInputNode;
 
 public class ComputationGraph {
-
   public Vector<Node> nodes;
-
   public Vector<Integer> parameterNodes;
 
   AbstractExecutionEngine ee;
@@ -23,7 +21,7 @@ public class ComputationGraph {
   public ComputationGraph() {
     nodes = new Vector<Node>();
     parameterNodes = new Vector<Integer>();
-    ee = new SimpleExecutionEngine();
+    ee = new SimpleExecutionEngine(this);
   }
   
   void clear() {
@@ -37,14 +35,14 @@ public class ComputationGraph {
     setDimForNewNode(newNodeIndex);
     return newNodeIndex;
   }
+
   public int addInput(final Dim d, final Vector <Double> data) {
     int newNodeIndex = nodes.size();
     nodes.addElement(new InputNode(d, data));
     setDimForNewNode(newNodeIndex);
     return newNodeIndex;
   }
-  
-  
+
   public int addParameters(Parameters p) {
     int newNodeIndex = nodes.size();
     ParameterNode newNode = new ParameterNode(p);
@@ -61,8 +59,7 @@ public class ComputationGraph {
     setDimForNewNode(newNodeIndex);
     return newNodeIndex;
   }
-  
-  
+
   public int addLookup(LookupParameters p, AtomicInteger index){
     int newNodeIndex = nodes.size();
     LookupNode newNode = new LookupNode(p, index);
@@ -71,6 +68,7 @@ public class ComputationGraph {
     setDimForNewNode(newNodeIndex);
     return newNodeIndex;
   }
+
   public int addLookup(LookupParameters p, final Vector <Integer> indices) {
     int newNodeIndex = nodes.size();
     LookupNode newNode = new LookupNode(p, indices);
@@ -79,6 +77,7 @@ public class ComputationGraph {
     setDimForNewNode(newNodeIndex);
     return newNodeIndex;
   }
+
   public int addConstLookup(LookupParameters p, AtomicInteger index){
     int newNodeIndex = nodes.size();
     LookupNode newNode = new LookupNode(p, index);
@@ -86,6 +85,7 @@ public class ComputationGraph {
     setDimForNewNode(newNodeIndex);
     return newNodeIndex;
   }
+
   public int addConstLookup(LookupParameters p, final Vector <Integer> indices) {
     int newNodeIndex = nodes.size();
     LookupNode newNode = new LookupNode(p, indices);
@@ -112,41 +112,47 @@ public class ComputationGraph {
     setDimForNewNode(newNodeIndex);
     return newNodeIndex;
   }
-  
 
   private void setDimForNewNode(final int i) {
     Node node = nodes.get(i);
     Vector<Dim> xds = new Vector<Dim>(node.arity());
     int ai = 0;
     for (int arg : node.args) {
-      xds.set(ai, new Dim(nodes.get(arg).dim));
+      xds.add(ai, new Dim(nodes.get(arg).dim));
       ++ai;
     }
     node.dim = node.dimForward(xds);
   }
+
   public Tensor incrementalForward() {
     return ee.incrementalForward();
   }
+
   public Tensor forward() {
     return ee.forward();
   }
+
   public Tensor getValue(int i) {
     return ee.getValue(i);
   }
+
   public Tensor getValue(final Expression e) {
     return this.getValue(e.i);
   }
+
   public void invalidate() {
     ee.invalidate();
   }
+
   public void backward() {
     ee.backward();
   }
+
   public void backward(int i) {
     ee.backward(i);
   }
+
   public void PrintGrapviz() {
     //...
   }
-
 }
