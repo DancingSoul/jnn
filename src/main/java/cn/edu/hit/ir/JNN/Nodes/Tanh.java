@@ -6,7 +6,7 @@ import java.util.Vector;
 import cn.edu.hit.ir.JNN.Dim;
 import cn.edu.hit.ir.JNN.Tensor;
 
-public class Tanh extends Node{
+public class Tanh extends Node {
   public Tanh(List<Integer> x) {
     dim = new Dim();
     args.setSize(x.size());
@@ -14,15 +14,19 @@ public class Tanh extends Node{
       args.setElementAt(x.get(i), i);
     }
   }
+
   public String asString(final Vector<String> argNames) {
     return "";
   }
-  public Dim dimForward(final Vector <Dim> xs) {
-    return null;
+
+  public Dim dimForward(final Vector<Dim> xs) {
+    return xs.get(0);
   }
+
   public boolean supportsMultibatch() {
     return true;
   }
+
   public void forwardImpl(final Vector<Tensor> xs, Tensor fx) {
     for (int i = 0; i < fx.v.numRows; ++i) {
       for (int j = 0; j < fx.v.numCols; ++j) {
@@ -30,11 +34,12 @@ public class Tanh extends Node{
       }
     }
   }
+
   public void backwardImpl(final Vector<Tensor> xs,
-      final Tensor fx, final Tensor dEdf, int i_, Tensor dEdxi) {
+                           final Tensor fx, final Tensor dEdf, int i_, Tensor dEdxi) {
     for (int i = 0; i < fx.v.numRows; ++i) {
       for (int j = 0; j < fx.v.numCols; ++j) {
-         dEdxi.v.add(i, j, dEdf.v.get(i, j) * (1.0 - Math.pow(fx.v.get(i, j), 2)));
+        dEdxi.v.add(i, j, dEdf.v.get(i, j) * (1.0 - Math.pow(fx.v.get(i, j), 2)));
       }
     }
   }

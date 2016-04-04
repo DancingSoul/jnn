@@ -33,6 +33,6 @@ public class ConstParameterNode extends Node {
         "called backward() on a arity 0 node");
   }
 
-  public Dim dim;
+  //public Dim dim;
   public Parameters params;
 }

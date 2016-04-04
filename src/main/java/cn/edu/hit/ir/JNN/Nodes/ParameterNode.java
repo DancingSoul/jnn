@@ -7,13 +7,13 @@ import java.util.Vector;
 
 public class ParameterNode extends AbstractParameterNode {
   public ParameterNode(Parameters p) {
-      params = p;
-      dim = new Dim(p.dim);
+    params = p;
+    dim = new Dim(p.dim);
   }
 
   public Dim dimForward(Vector<Dim> xs) {
     assert (xs.size() == 0);
-    return null;
+    return dim;
   }
 
   public String asString(final Vector<String> argNames) {
@@ -36,6 +36,6 @@ public class ParameterNode extends AbstractParameterNode {
     params.accumulateGrad(g);
   }
 
-  public Dim dim;
+  // public Dim dim;
   public Parameters params;
 }

@@ -35,6 +35,6 @@ public class InputNode extends Node {
         "called backward() on a arity 0 node");
   }
   
-  Dim dim;
+  //Dim dim;
   Vector <Double> data;
 }

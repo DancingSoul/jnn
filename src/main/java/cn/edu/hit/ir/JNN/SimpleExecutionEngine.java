@@ -12,14 +12,16 @@ class SimpleExecutionEngine extends AbstractExecutionEngine {
   int numNodesEvaluated;
 
   SimpleExecutionEngine() {
-      nfxs = new Vector<Tensor>();
-      ndEdfs = new Vector<Tensor>();
+    nfxs = new Vector<Tensor>();
+    ndEdfs = new Vector<Tensor>();
+    numNodesEvaluated = 0;
   }
 
   public SimpleExecutionEngine(final ComputationGraph cg_) {
     cg = cg_;
     nfxs = new Vector<Tensor>();
     ndEdfs = new Vector<Tensor>();
+    numNodesEvaluated = 0;
   }
 
   public void invalidate() {
@@ -64,8 +66,9 @@ class SimpleExecutionEngine extends AbstractExecutionEngine {
           xs.set(ai, nfxs.get(arg));
           ++ai;
         }
-        nfxs.get(numNodesEvaluated).d = node.dim;
-        nfxs.get(numNodesEvaluated).v = new DenseMatrix64F(node.dim.size());
+        nfxs.set(numNodesEvaluated, new Tensor(node.dim));
+        // nfxs.get(numNodesEvaluated).d = node.dim;
+        // nfxs.get(numNodesEvaluated).v = new DenseMatrix64F(node.dim.size());
         node.forward(xs, nfxs.get(numNodesEvaluated));
       }
     }
@@ -89,13 +92,15 @@ class SimpleExecutionEngine extends AbstractExecutionEngine {
     ndEdfs.setSize(numNodes);
     for (int i = 0; i < numNodes; ++i) {
       Dim dim = nfxs.get(i).d;
-      ndEdfs.get(i).d = dim;
-      ndEdfs.get(i).v = new DenseMatrix64F(dim.size());
+      ndEdfs.set(i, new Tensor(dim));
+      // ndEdfs.get(i).d = dim;
+      // ndEdfs.get(i).v = new DenseMatrix64F(dim.size());
     }
     ndEdfs.lastElement().v = new DenseMatrix64F(1);
     ndEdfs.lastElement().v.set(0, 1);
 
     Vector<Boolean> needsDerivative = new Vector<Boolean>(numNodes);
+    needsDerivative.setSize(numNodes);
     for (int i = 0; i < numNodes; ++i)
       needsDerivative.set(i, false);
     for (Integer i : cg.parameterNodes)
@@ -109,6 +114,7 @@ class SimpleExecutionEngine extends AbstractExecutionEngine {
     }
 
     Vector<Boolean> inComputation = new Vector<Boolean>(numNodes);
+    inComputation.setSize(numNodes);
     for (int i = 0; i < numNodes; ++i) {
       inComputation.set(i, false);
     }

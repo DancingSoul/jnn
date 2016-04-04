@@ -12,20 +12,23 @@ public class ScalarInputNode extends Node {
     dim = new Dim();
     data = s;
   }
+
   public String asString(final Vector<String> argNames) {
     return "";
   }
-  
+
   public Dim dimForward(final Vector<Dim> xs) {
     return new Dim(Arrays.asList(1));
   }
+
   public void forwardImpl(final Vector<Tensor> xs, Tensor fx) {
     fx.v.set(0, data.doubleValue());
   }
+
   public void backwardImpl(Vector<Tensor> xs, Tensor fx, Tensor dEdf, int i, Tensor dEdxi) {
     throw new RuntimeException(
         "called backward() on a arity 0 node");
   }
-  
+
   AtomicDouble data;
 }
