@@ -63,10 +63,10 @@ class SimpleExecutionEngine extends AbstractExecutionEngine {
         xs.setSize(node.arity());
         int ai = 0;
         for (Integer arg : node.args) {
-          xs.add(ai, nfxs.get(arg));
+          xs.set(ai, nfxs.get(arg));
           ++ai;
         }
-        nfxs.add(numNodesEvaluated, new Tensor(node.dim));
+        nfxs.set(numNodesEvaluated, new Tensor(node.dim));
         // nfxs.get(numNodesEvaluated).d = node.dim;
         // nfxs.get(numNodesEvaluated).v = new DenseMatrix64F(node.dim.size());
         node.forward(xs, nfxs.get(numNodesEvaluated));
@@ -92,8 +92,9 @@ class SimpleExecutionEngine extends AbstractExecutionEngine {
     ndEdfs.setSize(numNodes);
     for (int i = 0; i < numNodes; ++i) {
       Dim dim = nfxs.get(i).d;
-      ndEdfs.get(i).d = dim;
-      ndEdfs.get(i).v = new DenseMatrix64F(dim.size());
+      ndEdfs.set(i, new Tensor(dim));
+      // ndEdfs.get(i).d = dim;
+      // ndEdfs.get(i).v = new DenseMatrix64F(dim.size());
     }
     ndEdfs.lastElement().v = new DenseMatrix64F(1);
     ndEdfs.lastElement().v.set(0, 1);
