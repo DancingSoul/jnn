@@ -100,6 +100,7 @@ class SimpleExecutionEngine extends AbstractExecutionEngine {
     ndEdfs.lastElement().v.set(0, 1);
 
     Vector<Boolean> needsDerivative = new Vector<Boolean>(numNodes);
+    needsDerivative.setSize(numNodes);
     for (int i = 0; i < numNodes; ++i)
       needsDerivative.set(i, false);
     for (Integer i : cg.parameterNodes)
@@ -113,6 +114,7 @@ class SimpleExecutionEngine extends AbstractExecutionEngine {
     }
 
     Vector<Boolean> inComputation = new Vector<Boolean>(numNodes);
+    inComputation.setSize(numNodes);
     for (int i = 0; i < numNodes; ++i) {
       inComputation.set(i, false);
     }

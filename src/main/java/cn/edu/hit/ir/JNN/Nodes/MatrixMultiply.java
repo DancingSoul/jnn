@@ -64,7 +64,7 @@ public class MatrixMultiply extends Node {
       for (int b = 0; b < maxB; ++b) {
         DenseMatrix64F tmp = new DenseMatrix64F(dEdf.v.numRows, xs.get(1).v.numRows);
         CommonOps.transpose(xs.get(1).v);
-        CommonOps.mult(tmp, dEdf.v, xs.get(1).v);
+        CommonOps.mult(dEdf.v, xs.get(1).v, tmp);
         CommonOps.transpose(xs.get(1).v);
         CommonOps.addEquals(dEdxi.v, tmp);
       }
@@ -72,7 +72,7 @@ public class MatrixMultiply extends Node {
       if (xs.get(0).d.bd == 1) {
         DenseMatrix64F tmp = new DenseMatrix64F(xs.get(0).v.numCols, dEdf.v.numCols);
         CommonOps.transpose(xs.get(0).v);
-        CommonOps.mult(tmp, xs.get(0).v, dEdf.v);
+        CommonOps.mult(xs.get(0).v, dEdf.v, tmp);
         CommonOps.transpose(xs.get(0).v);
         CommonOps.addEquals(dEdxi.v, tmp);
       } else {
