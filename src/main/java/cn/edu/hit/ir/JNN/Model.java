@@ -20,7 +20,7 @@ public class Model implements Serializable {
   }
 
   public double gradientL2norm() {
-    if (gradientNormScratch.length == 0) {
+    if (gradientNormScratch == null) {
       gradientNormScratch = new Double[allParams.size()];
     }
     int pi = 0;
@@ -67,7 +67,7 @@ public class Model implements Serializable {
   }
   
   public void projectWeights(double radius) {
-    if (projectScratch.length == 0) {
+    if (projectScratch == null) {
       projectScratch = new Double[allParams.size()];
     }
     int pi = 0;

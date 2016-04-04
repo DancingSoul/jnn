@@ -48,7 +48,19 @@ public abstract class AbstractTrainer {
    * scale the gradient by (otherwise 1)
    */
   public double clipGradients() {
-    return 0.0;
+    double gscale = 1.0;
+    if (clippingEnabled) {
+      double gg = model.gradientL2norm();
+      if (Double.isNaN(gg) || Double.isInfinite(gg)) {
+        throw new RuntimeException(
+            "Magnitude of gradient is bad : " + gg);
+      }
+      if (gg > clipThreshold) {
+        ++clips;
+        gscale = clipThreshold / gg;
+      }
+    }
+    return gscale;
   }
 
   public void status() {

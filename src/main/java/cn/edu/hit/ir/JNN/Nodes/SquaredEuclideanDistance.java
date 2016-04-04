@@ -43,7 +43,7 @@ public class SquaredEuclideanDistance extends Node {
     DenseMatrix64F x1 = xs.get(0).v;
     DenseMatrix64F x2 = xs.get(1).v;
     DenseMatrix64F tmp = new DenseMatrix64F(x1.numRows, x1.numCols);
-    CommonOps.subtract(tmp, x1, x2);
+    CommonOps.subtract(x1, x2, tmp);
     fx.v.set(0, NormOps.normP2(tmp));
   }
 
@@ -55,7 +55,7 @@ public class SquaredEuclideanDistance extends Node {
     DenseMatrix64F tmp = new DenseMatrix64F(x1.numRows, x1.numCols);
     double scale = dEdf.v.get(0) * 2;
     if (i == 1) scale = -scale;
-    CommonOps.subtract(tmp, x1, x2);
+    CommonOps.subtract(x1, x2, tmp);
     CommonOps.scale(scale, tmp);
     CommonOps.addEquals(dEdxi.v, tmp);
   }
