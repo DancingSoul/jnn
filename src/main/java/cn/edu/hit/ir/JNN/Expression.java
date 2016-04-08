@@ -1,13 +1,14 @@
 package cn.edu.hit.ir.JNN;
 
+import java.util.Arrays;
+import java.util.Vector;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import cn.edu.hit.ir.JNN.Nodes.LogisticSigmoid;
 import cn.edu.hit.ir.JNN.Nodes.MatrixMultiply;
 import cn.edu.hit.ir.JNN.Nodes.SquaredEuclideanDistance;
 import cn.edu.hit.ir.JNN.Nodes.Sum;
 import cn.edu.hit.ir.JNN.Nodes.Tanh;
-
-import java.util.Arrays;
-import java.util.Vector;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class Expression {
   public ComputationGraph pg;
@@ -76,6 +77,11 @@ public class Expression {
       return new Expression(x.pg, x.pg.addFunction(new Tanh(Arrays.asList(x.i))));
     }
 
+    public static Expression logistic(final Expression x) {
+      return new Expression(x.pg, x.pg.addFunction(new LogisticSigmoid(Arrays.asList(x.i))));
+    }
+    
+    
     public static Expression squaredDistance(final Expression x, final Expression y) {
       return new Expression(x.pg, x.pg.addFunction(
           new SquaredEuclideanDistance(Arrays.asList(x.i, y.i))));

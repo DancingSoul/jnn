@@ -7,11 +7,13 @@ public class Parameters extends AbstractParameters {
   public Dim dim;
   public Tensor values;
   public Tensor g;
+  public Tensor gCheck;
 
   Parameters() {
     dim = new Dim();
     values = new Tensor();
     g = new Tensor();
+    gCheck = new Tensor();
   }
 
   public Parameters(Dim d, double scale){

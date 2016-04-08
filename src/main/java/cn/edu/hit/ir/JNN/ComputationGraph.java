@@ -155,4 +155,9 @@ public class ComputationGraph {
   public void PrintGrapviz() {
     //...
   }
+  
+  public void gradientCheck() {
+    
+    
+  }
 }

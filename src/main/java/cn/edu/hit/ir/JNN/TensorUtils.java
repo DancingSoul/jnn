@@ -2,6 +2,7 @@ package cn.edu.hit.ir.JNN;
 
 import java.util.List;
 import java.util.Random;
+import java.util.Vector;
 
 import org.ejml.ops.CommonOps;
 
@@ -29,7 +30,7 @@ public class TensorUtils {
     // random number generator.
     Random rand = new Random();
     for (int i = 0; i < d.d.size(); ++i) {
-      d.v.set(i, rand.nextFloat() * scale);
+      d.v.set(i, (rand.nextDouble() - 0.5) * scale * 2);
     }
   }
 
@@ -68,4 +69,12 @@ public class TensorUtils {
     assert (t.d.size() == 1);
     return t.v.get(0);
   }
+  public static Vector<Double> toVector(Tensor t) {
+    Vector<Double> res = new Vector<Double>(t.d.size());
+    for (int i = 0; i < t.v.numRows; i++) {
+      res.addElement(t.v.get(i, 0));
+    }  
+    return res;
+  }
+  
 }

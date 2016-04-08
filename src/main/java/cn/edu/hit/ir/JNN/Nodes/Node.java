@@ -7,13 +7,14 @@ import cn.edu.hit.ir.JNN.Dim;
 import cn.edu.hit.ir.JNN.Tensor;
 
 public abstract class Node {
-  Node() {
+  public Node() {
     dim = new Dim();
     args = new Vector<Integer>();
   }
 
   public Node(List<Integer> x) {
     dim = new Dim();
+    args = new Vector<Integer>(); 
     args.setSize(x.size());
     for (int i = 0; i < x.size(); i++) {
       args.setElementAt(x.get(i), i);

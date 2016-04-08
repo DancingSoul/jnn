@@ -93,8 +93,6 @@ class SimpleExecutionEngine extends AbstractExecutionEngine {
     for (int i = 0; i < numNodes; ++i) {
       Dim dim = nfxs.get(i).d;
       ndEdfs.set(i, new Tensor(dim));
-      // ndEdfs.get(i).d = dim;
-      // ndEdfs.get(i).v = new DenseMatrix64F(dim.size());
     }
     ndEdfs.lastElement().v = new DenseMatrix64F(1, 1);
     ndEdfs.lastElement().v.set(0, 1);

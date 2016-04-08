@@ -12,11 +12,7 @@ import cn.edu.hit.ir.JNN.Tensor;
 
 public class MatrixMultiply extends Node {
   public MatrixMultiply(List<Integer> x) {
-    dim = new Dim();
-    args.setSize(x.size());
-    for (int i = 0; i < x.size(); i++) {
-      args.setElementAt(x.get(i), i);
-    }
+    super(x);
   }
 
   public String asString(final Vector<String> argNames) {

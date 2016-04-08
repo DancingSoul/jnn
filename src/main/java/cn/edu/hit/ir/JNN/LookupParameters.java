@@ -11,12 +11,14 @@ public class LookupParameters extends AbstractParameters {
   public Dim dim;
   public Vector<Tensor> values;
   public Vector<Tensor> grads;
+  public Vector<Tensor> gradsCheck;
   public HashSet<Integer> nonZeroGrads;
 
   LookupParameters() {
     dim = new Dim();
     values = new Vector<Tensor>();
     grads = new Vector<Tensor>();
+    gradsCheck = new Vector<Tensor>();
     nonZeroGrads = new HashSet<Integer>();
   }
 
