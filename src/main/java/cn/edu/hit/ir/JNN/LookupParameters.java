@@ -26,6 +26,7 @@ public class LookupParameters extends AbstractParameters {
     dim = new Dim(d);
     values = new Vector<Tensor>(n);
     grads = new Vector<Tensor>(n);
+    gradsCheck = new Vector<Tensor>(n);
     nonZeroGrads = new HashSet<Integer>();
 
     for (int i = 0; i < n; i++){
@@ -34,6 +35,9 @@ public class LookupParameters extends AbstractParameters {
 
       grads.add(i, new Tensor(d));
       TensorUtils.zero(grads.get(i));
+      
+      gradsCheck.add(i, new Tensor(d));
+      TensorUtils.zero(gradsCheck.get(i));
     }
   }
 

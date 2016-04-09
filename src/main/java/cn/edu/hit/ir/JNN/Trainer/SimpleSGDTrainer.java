@@ -16,7 +16,7 @@ public class SimpleSGDTrainer extends AbstractTrainer {
   }
 
   public SimpleSGDTrainer(Model m) {
-    this(m, 0.00000001, 0.1);
+    this(m, 0.000000001, 0.1);
   }
 
   public SimpleSGDTrainer(Model m, double lam, double e0) {

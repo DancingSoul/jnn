@@ -36,6 +36,9 @@ public class ParameterNode extends AbstractParameterNode {
     params.accumulateGrad(g);
   }
 
+  public String getName() {
+    return "ParameterNode";
+  }
   // public Dim dim;
   public Parameters params;
 }

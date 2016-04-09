@@ -8,12 +8,6 @@ import cn.edu.hit.ir.JNN.LookupParameters;
 import cn.edu.hit.ir.JNN.Tensor;
 
 public class LookupNode extends AbstractParameterNode {
-  public LookupNode(LookupParameters p, AtomicInteger ind) {
-    dim = new Dim(p.dim);
-    index = ind;
-    params = p;
-  }
-
   public LookupNode(LookupParameters p, final Vector<Integer> inds) {
     dim = new Dim(p.dim);
     indices = inds;
@@ -38,10 +32,10 @@ public class LookupNode extends AbstractParameterNode {
   @Override
   public void forwardImpl(final Vector<Tensor> xs, Tensor fx) {
     assert (xs.size() == 0);
-    if (index != null) {
-      assert (index.get() < params.values.size());
+    if (indices.size() == 1) {
+      assert (indices.get(0) < params.values.size());
       assert (fx.d.getNumBatchElements() == 1);
-      fx.v = params.values.get(index.get()).v;
+      fx.v = params.values.get(indices.get(0)).v;
     } else {
       assert (indices != null);
       assert (fx.d.getNumBatchElements() == indices.size());
@@ -61,16 +55,19 @@ public class LookupNode extends AbstractParameterNode {
   }
 
   public void accumulateGrad(final Tensor g) {
-    if (index != null) {
-      params.accumulateGrad(index.get(), g);
+    if (indices.size() == 1) {
+      params.accumulateGrad(indices.get(0), g);
     } else {
       assert (indices != null);
       //...???
     }
   }
+  
+  public String getName() {
+    return "LookupNode";
+  }
 
   //Dim dim;
-  AtomicInteger index;
-  Vector<Integer> indices;
-  LookupParameters params;
+  public Vector<Integer> indices;
+  public LookupParameters params;
 }

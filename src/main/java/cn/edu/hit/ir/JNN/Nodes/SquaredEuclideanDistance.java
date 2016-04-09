@@ -44,7 +44,7 @@ public class SquaredEuclideanDistance extends Node {
     DenseMatrix64F x2 = xs.get(1).v;
     DenseMatrix64F tmp = new DenseMatrix64F(x1.numRows, x1.numCols);
     CommonOps.subtract(x1, x2, tmp);
-    fx.v.set(0, NormOps.normP2(tmp));
+    fx.v.set(0, Math.pow(NormOps.normP2(tmp), 2));
   }
 
   public void backwardImpl(final Vector<Tensor> xs,

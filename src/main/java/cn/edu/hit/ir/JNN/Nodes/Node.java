@@ -56,6 +56,10 @@ public abstract class Node {
     return args.size();
   }
 
+  public String getName() {
+    return "";
+  }
+  
   public Dim dim;
   public Vector<Integer> args;
 }

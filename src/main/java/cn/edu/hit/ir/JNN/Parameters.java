@@ -20,6 +20,7 @@ public class Parameters extends AbstractParameters {
     dim = new Dim(d);
     values = new Tensor(d);
     g = new Tensor(d);
+    gCheck = new Tensor(d);
 
     if (Math.abs(scale) > 1e-10) {
       TensorUtils.randomize(values, scale);
@@ -28,6 +29,7 @@ public class Parameters extends AbstractParameters {
     }
 
     TensorUtils.zero(g);
+    TensorUtils.zero(gCheck);
   }
 
   public void scaleParameters(double a){

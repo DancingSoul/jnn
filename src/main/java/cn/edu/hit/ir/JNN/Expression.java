@@ -44,13 +44,13 @@ public class Expression {
       return new Expression(g, g.addConstParameters(p));
     }
 
-    public static Expression lookup(ComputationGraph g, LookupParameters p, AtomicInteger index) {
-      return new Expression(g, g.addLookup(p, index));
-    }
-
-    public static Expression constLookup(ComputationGraph g, LookupParameters p, AtomicInteger index) {
-      return new Expression(g, g.addConstLookup(p, index));
-    }
+//    public static Expression lookup(ComputationGraph g, LookupParameters p, AtomicInteger index) {
+//      return new Expression(g, g.addLookup(p, index));
+//    }
+//
+//    public static Expression constLookup(ComputationGraph g, LookupParameters p, AtomicInteger index) {
+//      return new Expression(g, g.addConstLookup(p, index));
+//    }
 
     public static Expression lookup(ComputationGraph g, LookupParameters p,
                                     final Vector <Integer> indices) {
