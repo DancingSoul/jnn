@@ -3,7 +3,7 @@ package cn.edu.hit.ir.JNN;
 import java.util.List;
 import java.util.Random;
 import java.util.Vector;
-
+import org.ejml.alg.generic.GenericMatrixOps;
 import org.ejml.ops.CommonOps;
 
 public class TensorUtils {
@@ -28,10 +28,8 @@ public class TensorUtils {
   public static void randomize(Tensor d, double scale) {
     // TODO: optimize this, random generator should be obtained from a global
     // random number generator.
-    Random rand = new Random();
-    for (int i = 0; i < d.d.size(); ++i) {
-      d.v.set(i, (rand.nextDouble() - 0.5) * scale * 2);
-    }
+    Random rand = RandomEngine.getInstance().rnd;
+    GenericMatrixOps.setRandom(d.v, -scale, scale, rand);
   }
 
   public static void randomBernoulli(Tensor d, double p, double scale) {

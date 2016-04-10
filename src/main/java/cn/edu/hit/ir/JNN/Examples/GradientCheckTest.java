@@ -7,7 +7,7 @@ import cn.edu.hit.ir.JNN.Expression;
 import cn.edu.hit.ir.JNN.Model;
 import cn.edu.hit.ir.JNN.Trainer.SimpleSGDTrainer;
 
-public class gTest {
+public class GradientCheckTest {
   public static void main(String args[]) {
     Model m = new Model();
     SimpleSGDTrainer sgd = new SimpleSGDTrainer(m);
@@ -23,17 +23,9 @@ public class gTest {
     Expression b = Expression.Creator.multiply(a, x);
     
     Expression loss = Expression.Creator.squaredDistance(b, y);
-    
-    
     cg.gradientCheck();
     cg.forward();
     cg.backward();
     System.out.println(m.gradientCheck());
-    
-    
-    
-    
   }
-  
-  
 }

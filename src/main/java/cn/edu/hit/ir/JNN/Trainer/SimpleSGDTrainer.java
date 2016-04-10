@@ -10,8 +10,6 @@ import cn.edu.hit.ir.JNN.Model;
 import cn.edu.hit.ir.JNN.Parameters;
 
 public class SimpleSGDTrainer extends AbstractTrainer {
-
-
   SimpleSGDTrainer() {
   }
 

@@ -19,10 +19,12 @@ public class SquaredEuclideanDistance extends Node {
     }
   }
 
+  @Override
   public String asString(final Vector<String> argNames) {
-    return "";
+    return "|| " + argNames.get(0) + " - " + argNames.get(1) + " ||^2";
   }
 
+  @Override
   public Dim dimForward(final Vector<Dim> xs) {
     assert(xs.size() == 2);
     if (!xs.get(0).singleBatch().equals(xs.get(1).singleBatch())) {
@@ -38,6 +40,7 @@ public class SquaredEuclideanDistance extends Node {
     return true;
   }
 
+  @Override
   public void forwardImpl(final Vector<Tensor> xs, Tensor fx) {
     assert (xs.size() == 2);
     DenseMatrix64F x1 = xs.get(0).v;
@@ -47,6 +50,7 @@ public class SquaredEuclideanDistance extends Node {
     fx.v.set(0, Math.pow(NormOps.normP2(tmp), 2));
   }
 
+  @Override
   public void backwardImpl(final Vector<Tensor> xs,
                            final Tensor fx, final Tensor dEdf, int i, Tensor dEdxi) {
     assert (i < 2);
