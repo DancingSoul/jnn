@@ -98,7 +98,7 @@ public class MNIST {
       subsetSize = Integer.parseInt(args[0]);
       System.err.println("Use subset of " + subsetSize);
     }
-    for (int iteration = 0; iteration < 60; ++iteration) {
+    for (int iteration = 0; iteration < 30; ++iteration) {
       double lossIter = 0.0;
       Collections.shuffle(label);
       for (int i = 0; i < subsetSize; i++) {

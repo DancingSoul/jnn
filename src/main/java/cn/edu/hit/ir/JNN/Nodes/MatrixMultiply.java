@@ -17,7 +17,7 @@ public class MatrixMultiply extends Node {
 
   @Override
   public String asString(final Vector<String> argNames) {
-    return "";
+    return argNames.get(0) + " * " + argNames.get(1);
   }
 
   @Override
@@ -59,19 +59,15 @@ public class MatrixMultiply extends Node {
     int maxB = Math.max(xs.get(0).d.bd, xs.get(1).d.bd);
     if (i == 0) {
       for (int b = 0; b < maxB; ++b) {
-        DenseMatrix64F tmp = new DenseMatrix64F(dEdf.v.numRows, xs.get(1).v.numRows);
         CommonOps.transpose(xs.get(1).v);
-        CommonOps.mult(dEdf.v, xs.get(1).v, tmp);
+        CommonOps.multAdd(dEdf.v, xs.get(1).v, dEdxi.v);
         CommonOps.transpose(xs.get(1).v);
-        CommonOps.addEquals(dEdxi.v, tmp);
       }
     } else {
       if (xs.get(0).d.bd == 1) {
-        DenseMatrix64F tmp = new DenseMatrix64F(xs.get(0).v.numCols, dEdf.v.numCols);
         CommonOps.transpose(xs.get(0).v);
-        CommonOps.mult(xs.get(0).v, dEdf.v, tmp);
+        CommonOps.multAdd(xs.get(0).v, dEdf.v, dEdxi.v);
         CommonOps.transpose(xs.get(0).v);
-        CommonOps.addEquals(dEdxi.v, tmp);
       } else {
         //...
       }
