@@ -14,11 +14,11 @@ import cn.edu.hit.ir.JNN.TensorUtils;
 import cn.edu.hit.ir.JNN.Trainer.SimpleSGDTrainer;
 
 class MLCBuilder {
-  final static int HIDDEN_SIZE = 30;
-  Parameters pW;
-  Parameters pb;
-  Parameters pV;
-  Parameters pa;
+  private final static int HIDDEN_SIZE = 30;
+  private Parameters pW;
+  private Parameters pb;
+  private Parameters pV;
+  private Parameters pa;
 
   MLCBuilder(Model m) {
     pW = m.addParameters(Dim.create(HIDDEN_SIZE, 784));
@@ -37,18 +37,17 @@ class MLCBuilder {
 
     Expression h = Expression.Creator.logistic(
         Expression.Creator.add(Expression.Creator.multiply(W, x), b));
-    Expression yPredict = Expression.Creator.logistic(
+    return Expression.Creator.logistic(
         Expression.Creator.add(Expression.Creator.multiply(V, h), a));
-    return yPredict;
   }
 }
 
 public class MNIST {
-  public static void readFile(String fileName, Vector<Vector<Double>> x,
-                              Vector<Vector<Double>> y) {
+  private static void readFile(String fileName, Vector<Vector<Double>> x,
+                               Vector<Vector<Double>> y) {
     try {
       BufferedReader reader = new BufferedReader(new FileReader(fileName));
-      String line = null;
+      String line;
       while ((line = reader.readLine()) != null) {
         String item[] = line.split(",");
 
@@ -67,8 +66,6 @@ public class MNIST {
 
         vec.set(Integer.parseInt(item[0]), 1.0);
         y.addElement(vec);
-
-        //System.out.println(item.length);
       }
     } catch (Exception e) {
       e.printStackTrace();
@@ -79,12 +76,12 @@ public class MNIST {
     Vector<Vector<Double>> xTrain = new Vector<Vector<Double>>();
     Vector<Vector<Double>> yTrain = new Vector<Vector<Double>>();
     readFile("mnist_train.csv", xTrain, yTrain);
-    System.out.println("Done reading train.");
+    System.out.println("Done reading train with " + xTrain.size() + " instance(s).");
 
     Vector<Vector<Double>> xTest = new Vector<Vector<Double>>();
     Vector<Vector<Double>> yTest = new Vector<Vector<Double>>();
     readFile("mnist_test.csv", xTest, yTest);
-    System.out.println("Done reading test.");
+    System.out.println("Done reading test with " + xTest.size() + " instance(s).");
 
     Model m = new Model();
     SimpleSGDTrainer sgd = new SimpleSGDTrainer(m);
@@ -96,11 +93,15 @@ public class MNIST {
       label.set(i, i);
     }
 
-    System.out.println(label.size());
+    int subsetSize = xTrain.size();
+    if (args != null && args.length >= 1) {
+      subsetSize = Integer.parseInt(args[0]);
+      System.err.println("Use subset of " + subsetSize);
+    }
     for (int iteration = 0; iteration < 60; ++iteration) {
       double lossIter = 0.0;
       Collections.shuffle(label);
-      for (int i = 0; i < 100; i++) {
+      for (int i = 0; i < subsetSize; i++) {
         ComputationGraph cg = new ComputationGraph();
         Expression yPredict = mlc.buildPredictionScores(m, cg, xTrain.get(label.get(i)));
         Vector<Double> p = TensorUtils.toVector(cg.forward());
@@ -113,7 +114,7 @@ public class MNIST {
       }
       sgd.updateEpoch();
       lossIter /= 100;
-      System.out.println("E = " + lossIter);
+      System.err.println("Iteration #" + iteration + " E = " + lossIter);
     }
     int cnt = 0;
     for (int i = 0; i < xTest.size(); i++) {
@@ -132,8 +133,8 @@ public class MNIST {
           p2 = j;
       }
       if (p1 == p2) cnt++;
-      System.out.println(mx + " " + p1 + " : " + p2);
+      //System.err.println(mx + " " + p1 + " : " + p2);
     }
-    System.out.println(cnt + " / " + xTest.size());
+    System.err.println(cnt + " / " + xTest.size());
   }
 }
