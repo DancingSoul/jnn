@@ -1,9 +1,13 @@
 package cn.edu.hit.ir.JNN;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Vector;
-import java.util.concurrent.atomic.AtomicInteger;
 
+import cn.edu.hit.ir.JNN.Nodes.AffineTransform;
+import cn.edu.hit.ir.JNN.Nodes.ConstantMinusX;
+import cn.edu.hit.ir.JNN.Nodes.CwiseMultiply;
+import cn.edu.hit.ir.JNN.Nodes.Dropout;
 import cn.edu.hit.ir.JNN.Nodes.LogisticSigmoid;
 import cn.edu.hit.ir.JNN.Nodes.MatrixMultiply;
 import cn.edu.hit.ir.JNN.Nodes.SquaredEuclideanDistance;
@@ -14,7 +18,7 @@ public class Expression {
   public ComputationGraph pg;
   public int i;
 
-  Expression() {
+  public Expression() {
     pg = null;
   }
 
@@ -85,6 +89,31 @@ public class Expression {
     public static Expression squaredDistance(final Expression x, final Expression y) {
       return new Expression(x.pg, x.pg.addFunction(
           new SquaredEuclideanDistance(Arrays.asList(x.i, y.i))));
+    }
+    public static Expression cwiseMultiply(final Expression x, final Expression y) {
+      return new Expression(x.pg, x.pg.addFunction(
+          new CwiseMultiply(Arrays.asList(x.i, y.i))));
+    }
+    public static Expression dropout(final Expression x, double p) {
+      return new Expression(x.pg, x.pg.addFunction(
+          new Dropout(Arrays.asList(x.i), p)));
+    }
+    public static Expression constantMinusX(double p, Expression x) {
+      return new Expression(x.pg, x.pg.addFunction(
+          new ConstantMinusX(Arrays.asList(x.i), p)));
+    }
+    public static Expression affineTransform(final List<Expression> xs) {
+      assert(xs.size() == 0);
+      return new Expression(xs.get(0).pg, xs.get(0).pg.addFunction(
+          new AffineTransform(getIndices(xs))));
+    }
+    
+    public static Vector <Integer> getIndices(List <Expression> xs) {
+      Vector <Integer> res = new Vector<Integer>(xs.size());
+      for (int i = 0; i < xs.size(); ++i) {
+        res.set(i, xs.get(i).i);
+      }
+      return res;
     }
   }
 }
