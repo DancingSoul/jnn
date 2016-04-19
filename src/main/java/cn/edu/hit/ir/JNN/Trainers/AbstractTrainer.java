@@ -1,4 +1,4 @@
-package cn.edu.hit.ir.JNN.Trainer;
+package cn.edu.hit.ir.JNN.Trainers;
 
 import cn.edu.hit.ir.JNN.Model;
 

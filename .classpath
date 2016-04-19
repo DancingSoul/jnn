@@ -9,5 +9,8 @@
 	<classpathentry exported="true" kind="lib" path="libs/ejml-equation-0.29.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/ejml-dense64-0.29.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/ejml-denseC64-0.29.jar"/>
+	<classpathentry kind="lib" path="libs/ojalgo-39.0.jar"/>
+	<classpathentry kind="lib" path="libs/ojalgo-biz-39.0.jar"/>
+	<classpathentry kind="lib" path="libs/ojalgo-ext-39.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
