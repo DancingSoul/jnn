@@ -3,6 +3,7 @@ package cn.edu.hit.ir.JNN.Examples;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Vector;
 
 import cn.edu.hit.ir.JNN.ComputationGraph;
@@ -45,13 +46,13 @@ class MLCBuilder {
 
 public class MNIST {
 
-  public static void readFile(String fileName, Vector <Vector<Double> > x, 
-      Vector <Vector<Double> > y) {
+  public static void readFile(String fileName, Vector <Vector<Double> > x,
+                              Vector <Vector<Double> > y) {
     try { 
-      BufferedReader reader = new BufferedReader(new FileReader(fileName));//换成你的文件名
+      BufferedReader reader = new BufferedReader(new FileReader(fileName));
       String line = null;
       while((line = reader.readLine()) != null){ 
-        String item[] = line.split(",");//CSV格式文件为逗号分隔符文件，这里根据逗号切分
+        String item[] = line.split(",");
         
         
         Vector <Double> vec = new Vector<Double>(784);
@@ -94,7 +95,9 @@ public class MNIST {
     readFile("mnist_test.csv", xTest, yTest);
 
     System.out.println("Done reading test.");
-    
+
+    System.out.println(new Date().getTime());
+
     Model m = new Model();
     SimpleSGDTrainer sgd = new SimpleSGDTrainer(m);
     MLCBuilder mlc = new MLCBuilder(m);
@@ -109,21 +112,23 @@ public class MNIST {
     for (int iteration = 0; iteration < 1; ++iteration) {
       double lossIter = 0.0;
       Collections.shuffle(label);
-      for (int i = 0; i < label.size(); i++) {
+      for (int i = 0; i < 2000; i++) {
         ComputationGraph cg = new ComputationGraph();
         Expression yPredict = mlc.buildPredictionScores(m, cg, xTrain.get(label.get(i)));
         Vector<Double> p = TensorUtils.toVector(cg.forward());
         
         Expression y = Expression.Creator.input(cg, Dim.create(10), yTrain.get(label.get(i)));
         Expression loss = Expression.Creator.squaredDistance(yPredict, y);
-        lossIter += TensorUtils.toScalar(cg.forward());
+        lossIter += TensorUtils.toScalar(cg.incrementalForward());
         cg.backward();
         sgd.update(1.0);
+        if (i % 100 == 0) System.out.println(i);
       }
       sgd.updateEpoch();
       lossIter /= 100;
       System.out.println("E = " + lossIter);
     }
+    System.out.println(new Date().getTime());
     int cnt = 0;
     for (int i = 0; i < xTest.size(); i++) {
       ComputationGraph cg = new ComputationGraph();
@@ -141,7 +146,7 @@ public class MNIST {
           p2 = j;
       }
       if (p1 == p2) cnt++;
-      System.out.println(mx + " " + p1 + " : " + p2);
+      //System.out.println(mx + " " + p1 + " : " + p2);
     }
     System.out.println(cnt + " / " + xTest.size());
   }

@@ -96,10 +96,10 @@ public class Model implements Serializable {
 
   public boolean gradientCheck() {
     for (int i = 0; i < params.size(); i++) {
-      for (int r = 0; r < params.get(i).g.v.numRows; r++) {
-        for (int c = 0; c < params.get(i).g.v.numCols; c++) {
-          System.out.println(params.get(i).g.v.get(r, c) + "       " + params.get(i).gCheck.v.get(r, c));
-          if (Math.abs(params.get(i).g.v.get(r, c) - params.get(i).gCheck.v.get(r, c)) > 1E-5) {
+      for (int r = 0; r < params.get(i).g.v.size(0); r++) {
+        for (int c = 0; c < params.get(i).g.v.size(1); c++) {
+          System.out.println(params.get(i).g.v.getDouble(r, c) + "       " + params.get(i).gCheck.v.getDouble(r, c));
+          if (Math.abs(params.get(i).g.v.getDouble(r, c) - params.get(i).gCheck.v.getDouble(r, c)) > 1E-5) {
             return false;
           }
         }
@@ -107,10 +107,10 @@ public class Model implements Serializable {
     }
     for (int i = 0; i < lookupParams.size(); i++) {
       for (int j = 0; j < lookupParams.get(i).grads.size(); j++) {
-        for (int r = 0; r < lookupParams.get(i).grads.get(j).v.numRows; r++) {
-          for (int c = 0; c < lookupParams.get(i).grads.get(j).v.numCols; c++) {
-            if (Math.abs(lookupParams.get(i).grads.get(j).v.get(r, c) - 
-                lookupParams.get(i).gradsCheck.get(j).v.get(r, c)) > 1E-5) {
+        for (int r = 0; r < lookupParams.get(i).grads.get(j).v.size(0); r++) {
+          for (int c = 0; c < lookupParams.get(i).grads.get(j).v.size(1); c++) {
+            if (Math.abs(lookupParams.get(i).grads.get(j).v.getDouble(r, c) -
+                lookupParams.get(i).gradsCheck.get(j).v.getDouble(r, c)) > 1E-5) {
               return false;
             }
           }

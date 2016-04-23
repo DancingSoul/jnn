@@ -2,8 +2,6 @@ package cn.edu.hit.ir.JNN.Nodes;
 
 import java.util.List;
 import java.util.Vector;
-import org.ejml.data.DenseMatrix64F;
-import org.ejml.ops.CommonOps;
 
 import cn.edu.hit.ir.JNN.Dim;
 import cn.edu.hit.ir.JNN.Tensor;
@@ -46,15 +44,14 @@ public class Sum extends Node {
       fx.v = xs.get(0).v;
       return;
     }
-    DenseMatrix64F res = fx.v;
     for (int i = 0; i < numArgs; i++) {
-      CommonOps.addEquals(res, xs.get(i).v);
+      fx.v.addi(xs.get(i).v);
     }
   }
 
   @Override
   public void backwardImpl(final Vector<Tensor> xs,
                            final Tensor fx, final Tensor dEdf, int i, Tensor dEdxi) {
-    CommonOps.addEquals(dEdxi.v, dEdf.v);
+    dEdxi.v.addi(dEdf.v);
   }
 }

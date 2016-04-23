@@ -1,7 +1,7 @@
 package cn.edu.hit.ir.JNN;
 
-import org.ejml.ops.CommonOps;
-import org.ejml.ops.NormOps;
+
+import org.nd4j.linalg.factory.Nd4j;
 
 public class Parameters extends AbstractParameters {
   public Dim dim;
@@ -33,15 +33,15 @@ public class Parameters extends AbstractParameters {
   }
 
   public void scaleParameters(double a){
-    CommonOps.scale(a, g.v);
+    g.v.muli(a);
   }
 
   public final double squaredL2norm(){
-    return Math.pow(NormOps.normP2(values.v), 2);
+    return Math.pow(values.v.norm2Number().doubleValue(), 2);
   }
 
   public final double gSquaredL2norm(){
-    return Math.pow(NormOps.normP2(g.v), 2);
+    return Math.pow(values.v.norm2Number().doubleValue(), 2);
   }
 
   public final int size(){
@@ -53,10 +53,9 @@ public class Parameters extends AbstractParameters {
     TensorUtils.copyElements(values, param.values);
   }
 
-  public void accumulateGrad(final Tensor d){
-    CommonOps.addEquals(g.v, d.v);
+  public void accumulateGrad(final Tensor d) {
+    g.v.addi(d.v);
   }
-
   public void clear() {
     TensorUtils.zero(g);
   }

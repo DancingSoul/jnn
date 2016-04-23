@@ -3,17 +3,14 @@ package cn.edu.hit.ir.JNN.Nodes;
 import java.util.List;
 import java.util.Vector;
 
-import org.ejml.data.DenseMatrix64F;
-import org.ejml.ops.CommonOps;
-
 import cn.edu.hit.ir.JNN.Dim;
 import cn.edu.hit.ir.JNN.Tensor;
 
 public class ConstantMinusX extends Node {
-  public double p;
-  public ConstantMinusX(List<Integer> x, double p_) {
+  public double c;
+  public ConstantMinusX(List<Integer> x, double c_) {
     super(x);
-    p = p_;
+    c = c_;
   }
 
   public String asString(final Vector<String> argNames) {
@@ -22,7 +19,8 @@ public class ConstantMinusX extends Node {
 
   @Override
   public Dim dimForward(final Vector<Dim> xs) {
-    return null;
+    assert(xs.size() == 1);
+    return xs.get(0);
   }
 
   @Override
@@ -32,11 +30,12 @@ public class ConstantMinusX extends Node {
 
   @Override
   public void forwardImpl(final Vector<Tensor> xs, Tensor fx) {
-    
+    fx.v = xs.get(0).v.subi(c);
   }
 
   @Override
   public void backwardImpl(final Vector<Tensor> xs,
                            final Tensor fx, final Tensor dEdf, int i, Tensor dEdxi) {
+    dEdxi.v.subi(dEdf.v);
   }
 }

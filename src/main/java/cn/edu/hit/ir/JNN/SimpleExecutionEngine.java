@@ -4,7 +4,7 @@ import java.util.Vector;
 
 import cn.edu.hit.ir.JNN.Nodes.AbstractParameterNode;
 import cn.edu.hit.ir.JNN.Nodes.Node;
-import org.ejml.data.DenseMatrix64F;
+import org.nd4j.linalg.factory.Nd4j;
 
 class SimpleExecutionEngine extends AbstractExecutionEngine {
   private Vector<Tensor> nfxs;
@@ -67,8 +67,6 @@ class SimpleExecutionEngine extends AbstractExecutionEngine {
           ++ai;
         }
         nfxs.set(numNodesEvaluated, new Tensor(node.dim));
-        // nfxs.get(numNodesEvaluated).d = node.dim;
-        // nfxs.get(numNodesEvaluated).v = new DenseMatrix64F(node.dim.size());
         node.forward(xs, nfxs.get(numNodesEvaluated));
       }
     }
@@ -94,8 +92,7 @@ class SimpleExecutionEngine extends AbstractExecutionEngine {
       Dim dim = nfxs.get(i).d;
       ndEdfs.set(i, new Tensor(dim));
     }
-    ndEdfs.lastElement().v = new DenseMatrix64F(1, 1);
-    ndEdfs.lastElement().v.set(0, 1);
+    ndEdfs.lastElement().v = Nd4j.eye(1);
 
     Vector<Boolean> needsDerivative = new Vector<Boolean>(numNodes);
     needsDerivative.setSize(numNodes);

@@ -4,8 +4,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Vector;
 
-import org.ejml.data.DenseMatrix64F;
-import org.ejml.ops.CommonOps;
 
 import cn.edu.hit.ir.JNN.Dim;
 import cn.edu.hit.ir.JNN.Tensor;
@@ -45,7 +43,7 @@ public class MatrixMultiply extends Node {
     assert (xs.size() == 2);
     assert (fx.d.bd == Math.max(xs.get(0).d.bd, xs.get(1).d.bd));
     if (xs.get(0).d.bd == 1) {
-      CommonOps.mult(xs.get(0).v, xs.get(1).v, fx.v);
+      fx.v = xs.get(0).v.mmul(xs.get(1).v);
     } else {
       //...
     }
@@ -58,19 +56,11 @@ public class MatrixMultiply extends Node {
     int maxB = Math.max(xs.get(0).d.bd, xs.get(1).d.bd);
     if (i == 0) {
       for (int b = 0; b < maxB; ++b) {
-        DenseMatrix64F tmp = new DenseMatrix64F(dEdf.v.numRows, xs.get(1).v.numRows);
-        CommonOps.transpose(xs.get(1).v);
-        CommonOps.mult(dEdf.v, xs.get(1).v, tmp);
-        CommonOps.transpose(xs.get(1).v);
-        CommonOps.addEquals(dEdxi.v, tmp);
+        dEdxi.v.addi(dEdf.v.mmul(xs.get(1).v.transpose()));
       }
     } else {
       if (xs.get(0).d.bd == 1) {
-        DenseMatrix64F tmp = new DenseMatrix64F(xs.get(0).v.numCols, dEdf.v.numCols);
-        CommonOps.transpose(xs.get(0).v);
-        CommonOps.mult(xs.get(0).v, dEdf.v, tmp);
-        CommonOps.transpose(xs.get(0).v);
-        CommonOps.addEquals(dEdxi.v, tmp);
+        dEdxi.v.addi(xs.get(0).v.transpose().mmul(dEdf.v));
       } else {
         //...
       }

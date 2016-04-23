@@ -2,13 +2,9 @@ package cn.edu.hit.ir.JNN.Nodes;
 
 import java.util.List;
 import java.util.Vector;
-
-import org.ejml.data.DenseMatrix64F;
-import org.ejml.ops.CommonOps;
-import org.ejml.ops.NormOps;
-
 import cn.edu.hit.ir.JNN.Dim;
 import cn.edu.hit.ir.JNN.Tensor;
+import org.nd4j.linalg.api.ndarray.INDArray;
 
 public class SquaredEuclideanDistance extends Node {
   public SquaredEuclideanDistance(List<Integer> x) {
@@ -40,23 +36,16 @@ public class SquaredEuclideanDistance extends Node {
 
   public void forwardImpl(final Vector<Tensor> xs, Tensor fx) {
     assert (xs.size() == 2);
-    DenseMatrix64F x1 = xs.get(0).v;
-    DenseMatrix64F x2 = xs.get(1).v;
-    DenseMatrix64F tmp = new DenseMatrix64F(x1.numRows, x1.numCols);
-    CommonOps.subtract(x1, x2, tmp);
-    fx.v.set(0, Math.pow(NormOps.normP2(tmp), 2));
+    fx.v.putScalar(0, xs.get(0).v.squaredDistance(xs.get(1).v));
   }
 
   public void backwardImpl(final Vector<Tensor> xs,
                            final Tensor fx, final Tensor dEdf, int i, Tensor dEdxi) {
     assert (i < 2);
-    DenseMatrix64F x1 = xs.get(0).v;
-    DenseMatrix64F x2 = xs.get(1).v;
-    DenseMatrix64F tmp = new DenseMatrix64F(x1.numRows, x1.numCols);
-    double scale = dEdf.v.get(0) * 2;
+
+    double scale = dEdf.v.getDouble(0) * 2;
     if (i == 1) scale = -scale;
-    CommonOps.subtract(x1, x2, tmp);
-    CommonOps.scale(scale, tmp);
-    CommonOps.addEquals(dEdxi.v, tmp);
+    INDArray tmp = xs.get(0).v.sub(xs.get(1).v);
+    dEdxi.v.addi(tmp.mul(scale));
   }
 }
