@@ -3,9 +3,6 @@ package cn.edu.hit.ir.JNN.Nodes;
 import java.util.List;
 import java.util.Vector;
 
-import org.ejml.data.DenseMatrix64F;
-import org.ejml.ops.CommonOps;
-
 import cn.edu.hit.ir.JNN.Dim;
 import cn.edu.hit.ir.JNN.Tensor;
 
@@ -20,7 +17,16 @@ public class CwiseMultiply extends Node {
 
   @Override
   public Dim dimForward(final Vector<Dim> xs) {
-    return null;
+    assert(xs.size() == 2);
+    Dim d = xs.get(0).truncate();
+    if (d.singleBatch() != xs.get(1).truncate().singleBatch()) {
+      StringBuilder s = new StringBuilder(
+              "Mismatched input dimensions in CwiseMultiply: ");
+      s.append(xs.get(0)).append(" ").append(xs.get(1));
+      throw new IllegalArgumentException(s.toString());
+    }
+    d.bd = Math.max(xs.get(1).bd, d.bd);
+    return d;
   }
 
   @Override
@@ -30,11 +36,18 @@ public class CwiseMultiply extends Node {
 
   @Override
   public void forwardImpl(final Vector<Tensor> xs, Tensor fx) {
-    
+    assert(xs.size() == 2);
+    fx.v = xs.get(0).v.mul(xs.get(1).v);
   }
 
   @Override
   public void backwardImpl(final Vector<Tensor> xs,
                            final Tensor fx, final Tensor dEdf, int i, Tensor dEdxi) {
+    assert(xs.size() == 2);
+    if (i == 0) {
+      dEdxi.v.addi(dEdf.v.mul(xs.get(1).v));
+    } else {
+      dEdxi.v.addi(dEdf.v.mul(xs.get(0).v));
+    }
   }
 }

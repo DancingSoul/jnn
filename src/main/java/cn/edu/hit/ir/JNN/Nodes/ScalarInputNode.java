@@ -22,7 +22,7 @@ public class ScalarInputNode extends Node {
   }
 
   public void forwardImpl(final Vector<Tensor> xs, Tensor fx) {
-    fx.v.set(0, data.doubleValue());
+    fx.v.putScalar(0, data.doubleValue());
   }
 
   public void backwardImpl(Vector<Tensor> xs, Tensor fx, Tensor dEdf, int i, Tensor dEdxi) {
