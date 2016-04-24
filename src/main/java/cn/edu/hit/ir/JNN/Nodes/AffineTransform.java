@@ -13,7 +13,11 @@ public class AffineTransform extends Node {
   }
 
   public String asString(final Vector<String> argNames) {
-    return "";
+    StringBuilder sb = new StringBuilder(argNames.get(0));
+    for (int i = 1; i < argNames.size(); i += 2) {
+      sb.append(" + ").append(argNames.get(i)).append(" * ").append(argNames.get(i + 1));
+    }
+    return sb.toString();
   }
 
   @Override
