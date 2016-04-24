@@ -10,8 +10,6 @@ import org.nd4j.linalg.api.ops.impl.transforms.SigmoidDerivative;
 import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.ops.transforms.Transforms;
 
-import static jdk.nashorn.internal.objects.NativeRegExp.exec;
-
 /**
  * \sigmoid(x_1)
  *
