@@ -2,7 +2,8 @@ package cn.edu.hit.ir.JNN;
 
 import java.io.Serializable;
 
-import org.ejml.data.DenseMatrix64F;
+import org.nd4j.linalg.api.ndarray.INDArray;
+import org.nd4j.linalg.factory.Nd4j;
 
 public class Tensor implements Serializable {
   /**
@@ -16,21 +17,21 @@ public class Tensor implements Serializable {
    */
   private static final long serialVersionUID = 2238574422776967031L;
   public Dim d;
-	public DenseMatrix64F v;
+	public INDArray v;
 
-	Tensor() {
+	public Tensor() {
 	  d = new Dim();
-	  v = new DenseMatrix64F();
+	  v = Nd4j.zeros(1, 1);
 	}
 
-  Tensor(final Dim d_) {
+  public Tensor(final Dim d_) {
     d = new Dim(d_);
-    v = new DenseMatrix64F(d_.at(0), d_.at(1));
+    v = Nd4j.zeros(d_.at(0), d_.at(1));
   }
 
-	Tensor(final Dim d_, final DenseMatrix64F v_) {
+	public Tensor(final Dim d_, final INDArray v_) {
 		d = new Dim(d_);
-		v = new DenseMatrix64F(v_);
+		v = v_.dup();
 	}
 
 	public boolean isValid() {
@@ -38,13 +39,13 @@ public class Tensor implements Serializable {
       // should pay attention to the uninitialized tensor.
       return false;
     }
-    if (d.size() != v.getNumElements()) {
+    if (d.size() != v.length()) {
       return false;
     }
 
 		int s = d.size();
 		for (int i = 0; i < s; ++i) {
-			if (Double.isNaN(v.get(i)) || Double.isInfinite(v.get(i))) {
+			if (Double.isNaN(v.getDouble(i)) || Double.isInfinite(v.getDouble(i))) {
 				return false;
 			}
 		}

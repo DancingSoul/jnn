@@ -1,8 +1,7 @@
 package cn.edu.hit.ir.JNN;
 
-import org.ejml.data.DenseMatrix64F;
-import org.ejml.ops.CommonOps;
-import org.ejml.ops.NormOps;
+import org.nd4j.linalg.api.ndarray.INDArray;
+import org.nd4j.linalg.factory.Nd4j;
 
 import java.util.HashSet;
 import java.util.Vector;
@@ -43,14 +42,14 @@ public class LookupParameters extends AbstractParameters {
 
   public void scaleParameters(double a){
     for (Tensor p : values) {
-      CommonOps.scale(a, p.v);
+      p.v.muli(a);
     }
   }
 
   public double squaredL2norm(){
     double a = 0;
     for (int i = 0; i < values.size(); ++i) {
-      a += Math.pow(NormOps.normP2(values.get(i).v), 2);
+      a += Math.pow(values.get(i).v.norm2Number().doubleValue(), 2);
     }
     return a;
   }
@@ -58,7 +57,7 @@ public class LookupParameters extends AbstractParameters {
   public double gSquaredL2norm(){
     double a = 0;
     for (Integer i : nonZeroGrads) {
-      a += Math.pow(NormOps.normP2(grads.get(i).v), 2);
+      a += Math.pow(grads.get(i).v.norm2Number().doubleValue(), 2);
     }
     return a;
   }
@@ -68,11 +67,10 @@ public class LookupParameters extends AbstractParameters {
   }
 
   public void initialize(int index, final Vector <Double> val) {
-    double[] tmp = new double[val.size()];
+    values.get(index).v = Nd4j.zeros(val.size(), 1);
     for (int i = 0; i < val.size(); i++) {
-      tmp[i] = val.get(i);
+      values.get(index).v.putScalar(i, val.get(i));
     }
-    values.get(index).v = new DenseMatrix64F(val.size(), 1, true, tmp);
   }
 
   public void copy(final LookupParameters param) {
@@ -82,7 +80,7 @@ public class LookupParameters extends AbstractParameters {
   }
 
   public void accumulateGrad(int index, final Tensor d) {
-    CommonOps.addEquals(grads.get(index).v, d.v);
+    grads.get(index).v.addi(d.v);
   }
 
   public void clear() {

@@ -32,9 +32,9 @@ public class Tanh extends Node {
 
   @Override
   public void forwardImpl(final Vector<Tensor> xs, Tensor fx) {
-    for (int i = 0; i < fx.v.numRows; ++i) {
-      for (int j = 0; j < fx.v.numCols; ++j) {
-        fx.v.set(i, j, Math.tanh(xs.get(0).v.get(i, j)));
+    for (int i = 0; i < fx.v.size(0); ++i) {
+      for (int j = 0; j < fx.v.size(1); ++j) {
+        fx.v.putScalar(new int[]{i, j}, Math.tanh(xs.get(0).v.getDouble(i, j)));
       }
     }
   }
@@ -42,9 +42,10 @@ public class Tanh extends Node {
   @Override
   public void backwardImpl(final Vector<Tensor> xs,
                            final Tensor fx, final Tensor dEdf, int i_, Tensor dEdxi) {
-    for (int i = 0; i < fx.v.numRows; ++i) {
-      for (int j = 0; j < fx.v.numCols; ++j) {
-        dEdxi.v.add(i, j, dEdf.v.get(i, j) * (1.0 - Math.pow(fx.v.get(i, j), 2)));
+    for (int i = 0; i < fx.v.size(0); ++i) {
+      for (int j = 0; j < fx.v.size(1); ++j) {
+        dEdxi.v.putScalar(new int[]{i, j}, dEdf.v.getDouble(i, j) * (1.0 - Math.pow(fx.v.getDouble(i, j), 2))
+                + dEdxi.v.getDouble(i, j));
       }
     }
   }

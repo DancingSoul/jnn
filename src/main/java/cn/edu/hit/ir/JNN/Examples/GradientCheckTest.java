@@ -5,7 +5,7 @@ import cn.edu.hit.ir.JNN.ComputationGraph;
 import cn.edu.hit.ir.JNN.Dim;
 import cn.edu.hit.ir.JNN.Expression;
 import cn.edu.hit.ir.JNN.Model;
-import cn.edu.hit.ir.JNN.Trainer.SimpleSGDTrainer;
+import cn.edu.hit.ir.JNN.Trainers.SimpleSGDTrainer;
 
 public class GradientCheckTest {
   public static void main(String args[]) {
