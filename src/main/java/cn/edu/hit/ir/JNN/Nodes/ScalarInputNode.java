@@ -25,7 +25,7 @@ public class ScalarInputNode extends Node {
 
   @Override
   public void forwardImpl(final Vector<Tensor> xs, Tensor fx) {
-    fx.v.set(0, data.doubleValue());
+    fx.v.putScalar(0, data.doubleValue());
   }
 
   @Override

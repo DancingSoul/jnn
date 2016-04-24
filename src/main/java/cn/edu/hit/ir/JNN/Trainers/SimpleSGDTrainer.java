@@ -1,20 +1,17 @@
-package cn.edu.hit.ir.JNN.Trainer;
+package cn.edu.hit.ir.JNN.Trainers;
 
 import java.util.Vector;
-
-import org.ejml.data.DenseMatrix64F;
-import org.ejml.ops.CommonOps;
-
 import cn.edu.hit.ir.JNN.LookupParameters;
 import cn.edu.hit.ir.JNN.Model;
 import cn.edu.hit.ir.JNN.Parameters;
+import org.nd4j.linalg.api.ndarray.INDArray;
 
 public class SimpleSGDTrainer extends AbstractTrainer {
   SimpleSGDTrainer() {
   }
 
   public SimpleSGDTrainer(Model m) {
-    this(m, 0.000000001, 0.1);
+    this(m, 0.000001, 0.1);
   }
 
   public SimpleSGDTrainer(Model m, double lam, double e0) {
@@ -33,22 +30,20 @@ public class SimpleSGDTrainer extends AbstractTrainer {
                      final Vector<Parameters> params, double scale) {
     double gscale = clipGradients();
     for (Parameters p : params) {
-      DenseMatrix64F reg = new DenseMatrix64F(p.values.v);
-      CommonOps.scale(lambda, reg);
-      DenseMatrix64F tmp = new DenseMatrix64F(p.g.v);
-      CommonOps.scale(eta * scale * gscale, tmp);
-      CommonOps.addEquals(tmp, reg);
-      CommonOps.subtractEquals(p.values.v, tmp);
+      INDArray reg = p.values.v.dup();
+      reg.muli(lambda);
+      p.g.v.muli(eta * scale * gscale);
+      p.g.v.addi(reg);
+      p.values.v.subi(p.g.v);
       p.clear();
     }
     for (LookupParameters p : lookupParams) {
       for (Integer i : p.nonZeroGrads) {
-        DenseMatrix64F reg = new DenseMatrix64F(p.values.get(i).v);
-        CommonOps.scale(lambda, reg);
-        DenseMatrix64F tmp = new DenseMatrix64F(p.grads.get(i).v);
-        CommonOps.scale(eta * scale * gscale, tmp);
-        CommonOps.addEquals(tmp, reg);
-        CommonOps.subtractEquals(p.values.get(i).v, tmp);
+        INDArray reg = p.values.get(i).v.dup();
+        reg.muli(lambda);
+        p.grads.get(i).v.muli(eta * scale * gscale);
+        p.grads.get(i).v.addi(reg);
+        p.values.get(i).v.subi(p.grads.get(i).v);
       }
       p.clear();
     }

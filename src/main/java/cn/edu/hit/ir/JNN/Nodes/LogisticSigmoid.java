@@ -5,6 +5,12 @@ import java.util.Vector;
 
 import cn.edu.hit.ir.JNN.Dim;
 import cn.edu.hit.ir.JNN.Tensor;
+import org.nd4j.linalg.api.ops.impl.transforms.Sigmoid;
+import org.nd4j.linalg.api.ops.impl.transforms.SigmoidDerivative;
+import org.nd4j.linalg.factory.Nd4j;
+import org.nd4j.linalg.ops.transforms.Transforms;
+
+import static jdk.nashorn.internal.objects.NativeRegExp.exec;
 
 /**
  * \sigmoid(x_1)
@@ -33,24 +39,20 @@ public class LogisticSigmoid extends Node {
 
   @Override
   public void forwardImpl(final Vector<Tensor> xs, Tensor fx) {
-    assert (xs.size() == 1);
-
-    for (int i = 0; i < fx.v.numRows; ++i) {
-      for (int j = 0; j < fx.v.numCols; ++j) {
-        fx.v.set(i, j, sigmoid(xs.get(0).v.get(i, j)));
-      }
-    }
+    assert(xs.size() == 1);
+    Nd4j.getExecutioner().exec(new Sigmoid(xs.get(0).v, fx.v));
   }
 
   @Override
   public void backwardImpl(final Vector<Tensor> xs,
                            final Tensor fx, final Tensor dEdf, int i_, Tensor dEdxi) {
-    for (int i = 0; i < fx.v.numRows; ++i) {
-      for (int j = 0; j < fx.v.numCols; ++j) {
-        double y = fx.v.get(i, j);
-        dEdxi.v.add(i, j, dEdf.v.get(i, j) * y * (1 - y));
+    for (int i = 0; i < fx.v.size(0); ++i) {
+      for (int j = 0; j < fx.v.size(1); ++j) {
+        double y = fx.v.getDouble(i, j);
+        dEdxi.v.putScalar(new int[]{i, j}, dEdf.v.getDouble(i, j) * y * (1 - y) + dEdxi.v.getDouble(i, j));
       }
     }
+    //dEdxi.v.addi(dEdf.v.muli(fx.v).muli(Nd4j.ones(fx.v.shape()).sub(fx.v)));
   }
 
   public Dim dim;

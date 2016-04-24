@@ -3,8 +3,6 @@ package cn.edu.hit.ir.JNN;
 import java.util.List;
 import java.util.Random;
 import java.util.Vector;
-import org.ejml.alg.generic.GenericMatrixOps;
-import org.ejml.ops.CommonOps;
 
 public class TensorUtils {
   /**
@@ -14,7 +12,7 @@ public class TensorUtils {
    * one will raise a nullpointer exception.
    */
   public static void constant(Tensor d, double c) {
-    CommonOps.fill(d.v, c);
+    d.v.assign(c);
   }
 
   public static void zero(Tensor d) {
@@ -29,48 +27,54 @@ public class TensorUtils {
     // TODO: optimize this, random generator should be obtained from a global
     // random number generator.
     Random rand = RandomEngine.getInstance().rnd;
-    GenericMatrixOps.setRandom(d.v, -scale, scale, rand);
+    for (int i = 0; i < d.d.size(); ++i) {
+      d.v.putScalar(i, (rand.nextDouble() - 0.5) * scale * 2);
+    }
   }
 
   public static void randomBernoulli(Tensor d, double p, double scale) {
+    Random rand = RandomEngine.getInstance().rnd;
+    for (int i = 0; i < d.v.length(); ++i) {
+      d.v.putScalar(i, rand.nextDouble() <= p ? scale : 0);
+    }
   }
   
   public static void randomizeNormal(double mean, double stddev, Tensor v) {
   }
 
   public static double accessElement(Tensor d, int index) {
-    return d.v.get(index);
+    return d.v.getDouble(index);
   }
 
   public static double accessElement(Tensor d, Dim index) {
     // return v[index[0], index[1]];
-    return d.v.get(index.at(0), index.at(1));
+    return d.v.getDouble(index.at(0), index.at(1));
   }
 
   public static void setElement(Tensor v, int index, double value) {
-    v.v.set(index, value);
+    v.v.putScalar(index, value);
   }
 
   public static void setElements(final Tensor d, final List<Double> vec) {
     for (int i = 0; i < vec.size(); i++) {
-       d.v.set(i, vec.get(i));
+       d.v.putScalar(i, vec.get(i));
     }
   }
 
   public static void copyElements(final Tensor tgt, final Tensor src) {
-    for (int i = 0; i < src.v.getNumElements(); ++i) {
-      tgt.v.set(i, src.v.get(i));
+    for (int i = 0; i < src.v.length(); ++i) {
+      tgt.v.putScalar(i, src.v.getDouble(i));
     }
   }
   
   public static double toScalar(Tensor t) {
     assert (t.d.size() == 1);
-    return t.v.get(0);
+    return t.v.getDouble(0);
   }
   public static Vector<Double> toVector(Tensor t) {
     Vector<Double> res = new Vector<Double>(t.d.size());
-    for (int i = 0; i < t.v.numRows; i++) {
-      res.addElement(t.v.get(i, 0));
+    for (int i = 0; i < t.v.size(0); i++) {
+      res.addElement(t.v.getDouble(i, 0));
     }  
     return res;
   }

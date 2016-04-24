@@ -8,12 +8,12 @@ import cn.edu.hit.ir.JNN.Dim;
 import cn.edu.hit.ir.JNN.Expression;
 import cn.edu.hit.ir.JNN.Model;
 import cn.edu.hit.ir.JNN.TensorUtils;
-import cn.edu.hit.ir.JNN.Trainer.SimpleSGDTrainer;
+import cn.edu.hit.ir.JNN.Trainers.SimpleSGDTrainer;
 
 public class xor {
   public static void main(String args[]){
     final int HIDDEN_SIZE = 8;
-    final int ITERATIONS = 60;
+    final int ITERATIONS = 30;
 
     Model m = new Model();
     SimpleSGDTrainer sgd = new SimpleSGDTrainer(m);
@@ -48,8 +48,7 @@ public class xor {
         // cg.gradientCheck();
         lossIter += TensorUtils.toScalar(cg.forward());
         cg.backward();
-        // System.out.println(m.gradientCheck());
-        
+        System.out.println(m.gradientCheck());
         sgd.update(1.0);
       }
       sgd.updateEpoch();
