@@ -49,7 +49,8 @@ public class SquaredEuclideanDistance extends Node {
 
     double scale = dEdf.v.getDouble(0) * 2;
     if (i == 1) scale = -scale;
-    INDArray tmp = xs.get(0).v.sub(xs.get(1).v);
-    dEdxi.v.addi(tmp.mul(scale));
+    //INDArray tmp = xs.get(0).v.sub(xs.get(1).v);
+    //dEdxi.v.addi(tmp.mul(scale));
+    dEdxi.v.addi(xs.get(0).v.sub(xs.get(1).v).mul(scale));
   }
 }
