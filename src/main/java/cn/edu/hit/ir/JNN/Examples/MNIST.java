@@ -127,7 +127,7 @@ public class MNIST {
         if (i % 100 == 0) System.err.println("[" + iteration + "," + i + "]");
       }
       sgd.updateEpoch();
-      lossIter /= 100;
+      lossIter /= numInstances;
       System.err.println("Iteration #" + iteration + " E = " + lossIter);
     }
     System.err.println("consume: " + (new Date().getTime() - startOfTraining));
