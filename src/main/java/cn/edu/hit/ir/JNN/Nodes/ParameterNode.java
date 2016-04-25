@@ -11,14 +11,15 @@ public class ParameterNode extends AbstractParameterNode {
     dim = new Dim(p.dim);
   }
 
+  @Override
   public Dim dimForward(Vector<Dim> xs) {
     assert (xs.size() == 0);
     return dim;
   }
 
+  @Override
   public String asString(final Vector<String> argNames) {
-    //...
-    return "";
+    return "Parameters(" + dim + ", " + params + ")";
   }
 
   public void forwardImpl(final Vector<Tensor> xs, Tensor fx) {
@@ -26,12 +27,14 @@ public class ParameterNode extends AbstractParameterNode {
     fx.v = params.values.v;
   }
 
+  @Override
   public void backwardImpl(final Vector<Tensor> xs,
                            final Tensor fx, final Tensor dEdf, int i, Tensor dEdxi) {
     throw new RuntimeException(
         "called backward() on a arity 0 node");
   }
 
+  @Override
   public void accumulateGrad(Tensor g) {
     params.accumulateGrad(g);
   }
@@ -39,6 +42,6 @@ public class ParameterNode extends AbstractParameterNode {
   public String getName() {
     return "ParameterNode";
   }
-  // public Dim dim;
+
   public Parameters params;
 }

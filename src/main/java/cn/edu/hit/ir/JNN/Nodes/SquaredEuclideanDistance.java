@@ -15,10 +15,12 @@ public class SquaredEuclideanDistance extends Node {
     }
   }
 
+  @Override
   public String asString(final Vector<String> argNames) {
-    return "";
+    return "|| " + argNames.get(0) + " - " + argNames.get(1) + " ||^2";
   }
 
+  @Override
   public Dim dimForward(final Vector<Dim> xs) {
     assert(xs.size() == 2);
     if (!xs.get(0).singleBatch().equals(xs.get(1).singleBatch())) {
@@ -34,18 +36,21 @@ public class SquaredEuclideanDistance extends Node {
     return true;
   }
 
+  @Override
   public void forwardImpl(final Vector<Tensor> xs, Tensor fx) {
     assert (xs.size() == 2);
     fx.v.putScalar(0, xs.get(0).v.squaredDistance(xs.get(1).v));
   }
 
+  @Override
   public void backwardImpl(final Vector<Tensor> xs,
                            final Tensor fx, final Tensor dEdf, int i, Tensor dEdxi) {
     assert (i < 2);
 
     double scale = dEdf.v.getDouble(0) * 2;
     if (i == 1) scale = -scale;
-    INDArray tmp = xs.get(0).v.sub(xs.get(1).v);
-    dEdxi.v.addi(tmp.mul(scale));
+    //INDArray tmp = xs.get(0).v.sub(xs.get(1).v);
+    //dEdxi.v.addi(tmp.mul(scale));
+    dEdxi.v.addi(xs.get(0).v.sub(xs.get(1).v).mul(scale));
   }
 }
