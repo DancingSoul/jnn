@@ -7,8 +7,6 @@ import cn.edu.hit.ir.JNN.Parameters;
 import org.nd4j.linalg.api.ndarray.INDArray;
 
 public class SimpleSGDTrainer extends AbstractTrainer {
-
-
   SimpleSGDTrainer() {
   }
 

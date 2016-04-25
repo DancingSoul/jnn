@@ -12,21 +12,24 @@ public class ConstParameterNode extends Node {
     params = p;
   }
 
+  @Override
   public String asString(final Vector<String> argNames) {
-    //...
-    return "";
+    return "ConstParameters(" + dim + ", " + params + ")";
   }
 
+  @Override
   public Dim dimForward(final Vector<Dim> xs) {
     assert (xs.size() == 0);
     return dim;
   }
 
+  @Override
   public void forwardImpl(final Vector<Tensor> xs, Tensor fx) {
     assert (xs.size() == 0);
     fx.v = params.values.v;
   }
 
+  @Override
   public void backwardImpl(final Vector<Tensor> xs,
                            final Tensor fx, final Tensor dEdf, int i, Tensor dEdxi) {
     throw new RuntimeException(

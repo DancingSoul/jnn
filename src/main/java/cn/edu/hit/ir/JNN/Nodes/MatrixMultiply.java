@@ -13,8 +13,9 @@ public class MatrixMultiply extends Node {
     super(x);
   }
 
+  @Override
   public String asString(final Vector<String> argNames) {
-    return "";
+    return argNames.get(0) + " * " + argNames.get(1);
   }
 
   @Override
