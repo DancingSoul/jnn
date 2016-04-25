@@ -96,7 +96,6 @@ public class MNIST {
 
     System.out.println("Done reading test.");
 
-    System.out.println(new Date().getTime());
 
     Model m = new Model();
     SimpleSGDTrainer sgd = new SimpleSGDTrainer(m);
@@ -108,11 +107,13 @@ public class MNIST {
     for (int i = 0; i < label.size(); i++)
       label.set(i, i);
 
+    System.out.println(new Date().getTime());
+
     System.out.println(label.size());
     for (int iteration = 0; iteration < 1; ++iteration) {
       double lossIter = 0.0;
       Collections.shuffle(label);
-      for (int i = 0; i < 2000; i++) {
+      for (int i = 0; i < label.size(); i++) {
         ComputationGraph cg = new ComputationGraph();
         Expression yPredict = mlc.buildPredictionScores(m, cg, xTrain.get(label.get(i)));
         Vector<Double> p = TensorUtils.toVector(cg.forward());
@@ -122,10 +123,10 @@ public class MNIST {
         lossIter += TensorUtils.toScalar(cg.incrementalForward());
         cg.backward();
         sgd.update(1.0);
-        if (i % 100 == 0) System.out.println(i);
+        if (i % 1000 == 0) System.out.println(i);
       }
       sgd.updateEpoch();
-      lossIter /= 100;
+      lossIter /= label.size();
       System.out.println("E = " + lossIter);
     }
     System.out.println(new Date().getTime());

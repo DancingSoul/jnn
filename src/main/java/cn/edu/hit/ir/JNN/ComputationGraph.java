@@ -159,15 +159,13 @@ public class ComputationGraph {
   public void checkParameterNode(Node a) {
     final double eta = 1E-8;
     Parameters b = ((ParameterNode)a).params;
-    for (int i = 0; i < b.values.v.size(0); i++) {
-      for (int j = 0; j < b.values.v.size(1); j++) {
-        b.values.v.putScalar(new int[]{i, j}, b.values.v.getDouble(i, j) + eta);
-        double x = TensorUtils.toScalar(forward());
-        b.values.v.putScalar(new int[]{i, j}, b.values.v.getDouble(i, j) - eta * 2);
-        double y = TensorUtils.toScalar(forward());
-        b.values.v.putScalar(new int[]{i, j}, b.values.v.getDouble(i, j) + eta);
-        b.gCheck.v.putScalar(new int[]{i, j}, (x - y) / 2.0 / eta);
-      }
+    for (int i = 0; i < b.values.v.length(); ++i){
+      b.values.v.putScalar(i, b.values.v.getDouble(i) + eta);
+      double x = TensorUtils.toScalar(forward());
+      b.values.v.putScalar(i, b.values.v.getDouble(i) - eta * 2);
+      double y = TensorUtils.toScalar(forward());
+      b.values.v.putScalar(i, b.values.v.getDouble(i) + eta);
+      b.gCheck.v.putScalar(i, (x - y) / 2.0 / eta);
     }
   }
   
@@ -177,15 +175,13 @@ public class ComputationGraph {
     Vector <Integer> c = ((LookupNode)a).indices;
     for (int k = 0; k < c.size(); k++) {
       int index = c.get(k);
-      for (int i = 0; i < b.values.get(index).v.size(0); ++i) {
-        for (int j = 0; j < b.values.get(index).v.size(1); ++j) {
-          b.values.get(index).v.putScalar(new int[]{i, j}, b.values.get(index).v.getDouble(i, j) + eta);
-          double x = TensorUtils.toScalar(forward());
-          b.values.get(index).v.putScalar(new int[]{i, j}, b.values.get(index).v.getDouble(i, j) - eta * 2);
-          double y = TensorUtils.toScalar(forward());
-          b.values.get(index).v.putScalar(new int[]{i, j}, b.values.get(index).v.getDouble(i, j) + eta);
-          b.gradsCheck.get(index).v.putScalar(new int[]{i, j}, (x - y) / 2.0 / eta);
-        }
+      for (int i = 0; i < b.values.get(index).v.length(); ++i) {
+        b.values.get(index).v.putScalar(i, b.values.get(index).v.getDouble(i) + eta);
+        double x = TensorUtils.toScalar(forward());
+        b.values.get(index).v.putScalar(i, b.values.get(index).v.getDouble(i) - eta * 2);
+        double y = TensorUtils.toScalar(forward());
+        b.values.get(index).v.putScalar(i, b.values.get(index).v.getDouble(i) + eta);
+        b.gradsCheck.get(index).v.putScalar(i, (x - y) / 2.0 / eta);
       }
     }
   }

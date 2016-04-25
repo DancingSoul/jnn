@@ -49,9 +49,27 @@ public class AffineTransform extends Node {
       fx.v = xs.get(0).v.dup();
       return;
     } else {
-      fx.v = xs.get(0).v.dup();
+      // Add, using broadcasting or not
+      if (fx.d.bd > 1 && xs.get(0).d.bd == 1) {
+        fx.rowcolMatrix();
+        for (int i = 0; i < fx.v.size(1); i++) {
+          fx.v.getColumn(i).assign(xs.get(0).vec().transpose());
+        }
+      } else {
+        for (int b = 0; b < fx.d.bd; ++b) {
+          fx.setBatchMatrix(b, xs.get(0).getBatchMatrix(b));
+        }
+      }
+      //Multiply
       for (int i = 1; i < xs.size(); i += 2) {
-        fx.v.addi(xs.get(i).v.mmul(xs.get(i + 1).v));
+        if (xs.get(i).d.bd == 1 && xs.get(i + 1).d.bd == fx.d.bd) {
+          fx.vec().addi(xs.get(i).getBatchMatrix(0).mmul(xs.get(i + 1).colbatchMatrix()).reshape(fx.d.size()));
+        } else {
+          assert(xs.get(i + 1).d.bd == 1 || xs.get(i + 1).d.bd == xs.get(i).d.bd);
+          for (int b = 0; b < fx.d.bd; ++b) {
+            fx.addBatchMatrix(b, xs.get(i).getBatchMatrix(b).mmul(xs.get(i + 1).getBatchMatrix(b)));
+          }
+        }
       }
     }
   }

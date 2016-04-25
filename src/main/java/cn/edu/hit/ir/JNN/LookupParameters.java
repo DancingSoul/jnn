@@ -80,7 +80,7 @@ public class LookupParameters extends AbstractParameters {
   }
 
   public void accumulateGrad(int index, final Tensor d) {
-    grads.get(index).v.addi(d.v);
+    grads.get(index).vec().addi(d.vec());
   }
 
   public void clear() {

@@ -23,21 +23,17 @@ public class LogisticSigmoid extends Node{
   
   public void forwardImpl(final Vector<Tensor> xs, Tensor fx) {
     assert(xs.size() == 1);
-    
-    for (int i = 0; i < fx.v.size(0); ++i) {
-      for (int j = 0; j < fx.v.size(1); ++j) {
-        fx.v.putScalar(new int[]{i, j}, sigmoid(xs.get(0).v.getDouble(i, j)));
-      }
+    for (int i = 0; i < fx.v.length(); ++i) {
+      fx.v.putScalar(i, sigmoid(xs.get(0).v.getDouble(i)));
     }
   }
   public void backwardImpl(final Vector<Tensor> xs,
       final Tensor fx, final Tensor dEdf, int i_, Tensor dEdxi) {
-    for (int i = 0; i < fx.v.size(0); ++i) {
-      for (int j = 0; j < fx.v.size(1); ++j) {
-        double y = fx.v.getDouble(i, j);
-        dEdxi.v.putScalar(new int[]{i, j}, dEdf.v.getDouble(i, j) * y * (1 - y) + dEdxi.v.getDouble(i, j));
-      }
+    for (int i = 0; i < fx.v.length(); ++i) {
+      double y = fx.v.getDouble(i);
+      dEdxi.v.putScalar(i, dEdf.v.getDouble(i) * y * (1 - y) + dEdxi.v.getDouble(i));
     }
   }
+
   public Dim dim;
 }

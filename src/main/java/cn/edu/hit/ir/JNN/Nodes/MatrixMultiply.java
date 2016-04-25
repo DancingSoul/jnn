@@ -43,7 +43,8 @@ public class MatrixMultiply extends Node {
     assert (xs.size() == 2);
     assert (fx.d.bd == Math.max(xs.get(0).d.bd, xs.get(1).d.bd));
     if (xs.get(0).d.bd == 1) {
-      fx.v = xs.get(0).v.mmul(xs.get(1).v);
+      fx.v = xs.get(0).getBatchMatrix(0).mmul(xs.get(1).colbatchMatrix());
+      //fx.v = xs.get(0).vec().mmul(xs.get(1).vec());
     } else {
       //...
     }
@@ -56,13 +57,15 @@ public class MatrixMultiply extends Node {
     int maxB = Math.max(xs.get(0).d.bd, xs.get(1).d.bd);
     if (i == 0) {
       for (int b = 0; b < maxB; ++b) {
-        dEdxi.v.addi(dEdf.v.mmul(xs.get(1).v.transpose()));
+        dEdxi.addBatchMatrix(b, dEdf.getBatchMatrix(b).mmul(xs.get(1).getBatchMatrix(b).transpose()));
       }
     } else {
       if (xs.get(0).d.bd == 1) {
-        dEdxi.v.addi(xs.get(0).v.transpose().mmul(dEdf.v));
+        dEdxi.vec().addi(xs.get(0).getBatchMatrix(0).transpose().mmul(dEdf.colbatchMatrix()).reshape(dEdxi.d.size()));
       } else {
-        //...
+        for (int b = 0; b < maxB; ++b) {
+          dEdxi.addBatchMatrix(b, xs.get(0).getBatchMatrix(b).transpose().mmul(dEdf.getBatchMatrix(b)));
+        }
       }
     }
   }

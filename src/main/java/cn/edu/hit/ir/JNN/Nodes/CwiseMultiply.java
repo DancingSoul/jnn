@@ -37,7 +37,7 @@ public class CwiseMultiply extends Node {
   @Override
   public void forwardImpl(final Vector<Tensor> xs, Tensor fx) {
     assert(xs.size() == 2);
-    fx.v = xs.get(0).v.mul(xs.get(1).v);
+    fx.v = xs.get(0).vec().mul(xs.get(1).vec());
   }
 
   @Override
@@ -45,9 +45,9 @@ public class CwiseMultiply extends Node {
                            final Tensor fx, final Tensor dEdf, int i, Tensor dEdxi) {
     assert(xs.size() == 2);
     if (i == 0) {
-      dEdxi.v.addi(dEdf.v.mul(xs.get(1).v));
+      dEdxi.vec().addi(dEdf.vec().mul(xs.get(1).vec()));
     } else {
-      dEdxi.v.addi(dEdf.v.mul(xs.get(0).v));
+      dEdxi.vec().addi(dEdf.vec().mul(xs.get(0).vec()));
     }
   }
 }
