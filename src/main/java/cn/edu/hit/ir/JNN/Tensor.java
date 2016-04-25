@@ -34,6 +34,39 @@ public class Tensor implements Serializable {
 		v = v_.dup();
 	}
 
+	//Get the data as a vector
+	//this returns the full tensor contents even if is has many dimensions
+	public INDArray vec() {
+		v = v.reshape(d.size());
+		return v;
+	}
+	//Get the matrix for a particular batch
+	public INDArray getBatchMatrix(int bid) {
+		bid %= d.bd;
+		v = v.reshape(d.bd, d.batchSize());
+		return v.getRow(bid).reshape(d.at(0), d.at(1));
+	}
+	public void setBatchMatrix(int bid, INDArray t) {
+		bid %= d.bd;
+		v = v.reshape(d.bd, d.batchSize());
+		v.getRow(bid).assign(t.reshape(t.length()));
+	}
+	public void addBatchMatrix(int bid, INDArray t) {
+		bid %= d.bd;
+		v = v.reshape(d.bd, d.batchSize());
+		v.getRow(bid).addi(t.reshape(t.length()));
+	}
+	//Get the data as a matrix, where each "row" is the concatenation of rows and columns, and each "column" is batches
+	public INDArray rowcolMatrix() {
+		v = v.reshape(d.getNumRows() * d.getNumCols(), d.getNumBatchElements());
+		return v;
+	}
+	//Get the data as a matrix, where each "row" is the concatenation of rows
+	//and each "column" is the concatenation of columns ans batches
+	public INDArray colbatchMatrix() {
+		v = v.reshape(d.getNumRows(), d.getNumCols() * d.getNumBatchElements());
+		return v;
+	}
 	public boolean isValid() {
     if (d == null || v == null) {
       // should pay attention to the uninitialized tensor.

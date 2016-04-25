@@ -41,17 +41,17 @@ public class Sum extends Node {
   public void forwardImpl(final Vector<Tensor> xs, Tensor fx) {
     int numArgs = xs.size();
     if (numArgs == 1) {
-      fx.v = xs.get(0).v;
+      fx.v = xs.get(0).v.dup();
       return;
     }
     for (int i = 0; i < numArgs; i++) {
-      fx.v.addi(xs.get(i).v);
+      fx.vec().addi(xs.get(i).vec());
     }
   }
 
   @Override
   public void backwardImpl(final Vector<Tensor> xs,
                            final Tensor fx, final Tensor dEdf, int i, Tensor dEdxi) {
-    dEdxi.v.addi(dEdf.v);
+    dEdxi.vec().addi(dEdf.vec());
   }
 }
