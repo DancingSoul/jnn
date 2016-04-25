@@ -45,7 +45,7 @@ public class xor {
         xValues.set(0, x1 == 1 ? 1.0 : -1.0);
         xValues.set(1, x2 == 1 ? 1.0 : -1.0);
         yValue.set((x1 != x2) ? 1.0 : -1.0);
-        cg.gradientCheck();
+        // cg.gradientCheck();
         lossIter += TensorUtils.toScalar(cg.forward());
         cg.backward();
         System.out.println(m.gradientCheck());

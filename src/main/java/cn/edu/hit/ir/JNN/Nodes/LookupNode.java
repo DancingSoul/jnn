@@ -15,8 +15,9 @@ public class LookupNode extends AbstractParameterNode {
     dim.bd = inds.size();
   }
 
+  @Override
   public String asString(final Vector<String> argNames) {
-    return "";
+    return "LookupParameter(|x|=" + params.values.size() + " --> " + params.dim + ")";
   }
 
   @Override

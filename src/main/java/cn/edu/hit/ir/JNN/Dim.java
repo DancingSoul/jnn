@@ -41,8 +41,7 @@ public class Dim {
   }
 
   public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append(bd).append(" ").append("(");
+    StringBuilder sb = new StringBuilder("(");
     if (nd > 0) {
       for (int i = 0; i < nd; ++i) {
         sb.append(d[i]);
@@ -51,6 +50,7 @@ public class Dim {
     } else {
       sb.append(")");
     }
+    sb.append("|").append(bd);
     return sb.toString();
   }
 

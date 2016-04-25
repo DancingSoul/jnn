@@ -14,9 +14,7 @@ public class ParametersTest {
     Parameters param = new Parameters(new Dim(Arrays.asList(3, 4), 1), 10);
     Assert.assertEquals(param.dim.at(0), 3);
     Assert.assertEquals(param.dim.at(1), 4);
-    System.out.println(param.values.d);
     System.out.println(param.values.v);
-    System.out.println(param.g.d);
     System.out.println(param.g.v);
   }
 
