@@ -1,6 +1,6 @@
 package cn.edu.hit.ir.JNN;
 
-import java.util.Random;
+import org.nd4j.linalg.api.rng.DefaultRandom;
 
 /**
  * A singleton class for random generator.
@@ -8,7 +8,7 @@ import java.util.Random;
 public class RandomEngine {
   private static RandomEngine INSTANCE = null;
   private static long seed = 1024;
-  public Random rnd;
+  public DefaultRandom rnd;
 
   public static RandomEngine getInstance() {
     if (INSTANCE == null) {
@@ -18,6 +18,6 @@ public class RandomEngine {
   }
 
   protected RandomEngine() {
-    rnd = new Random(seed);
+    rnd = new DefaultRandom(seed);
   }
 }

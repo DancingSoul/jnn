@@ -6,9 +6,7 @@ import java.util.Vector;
 import cn.edu.hit.ir.JNN.Dim;
 import cn.edu.hit.ir.JNN.Tensor;
 import org.nd4j.linalg.api.ops.impl.transforms.Sigmoid;
-import org.nd4j.linalg.api.ops.impl.transforms.SigmoidDerivative;
 import org.nd4j.linalg.factory.Nd4j;
-import org.nd4j.linalg.ops.transforms.Transforms;
 
 /**
  * \sigmoid(x_1)
@@ -50,7 +48,7 @@ public class LogisticSigmoid extends Node {
         dEdxi.v.putScalar(new int[]{i, j}, dEdf.v.getDouble(i, j) * y * (1 - y) + dEdxi.v.getDouble(i, j));
       }
     }
-    //dEdxi.v.addi(dEdf.v.muli(fx.v).muli(Nd4j.ones(fx.v.shape()).sub(fx.v)));
+    //dEdxi.v.addi(dEdf.v.muli(fx.v).muli(fx.v.rsub(1.)));
   }
 
   public Dim dim;

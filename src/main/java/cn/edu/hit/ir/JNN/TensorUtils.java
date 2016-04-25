@@ -1,5 +1,8 @@
 package cn.edu.hit.ir.JNN;
 
+import org.nd4j.linalg.api.rng.DefaultRandom;
+import org.nd4j.linalg.factory.Nd4j;
+
 import java.util.List;
 import java.util.Random;
 import java.util.Vector;
@@ -16,7 +19,8 @@ public class TensorUtils {
   }
 
   public static void zero(Tensor d) {
-    constant(d, 0d);
+    d.v = Nd4j.zeros(d.v.shape());
+    //constant(d, 0d);
   }
 
   public static void randomize(Tensor d) {
@@ -26,14 +30,12 @@ public class TensorUtils {
   public static void randomize(Tensor d, double scale) {
     // TODO: optimize this, random generator should be obtained from a global
     // random number generator.
-    Random rand = RandomEngine.getInstance().rnd;
-    for (int i = 0; i < d.d.size(); ++i) {
-      d.v.putScalar(i, (rand.nextDouble() - 0.5) * scale * 2);
-    }
+    DefaultRandom rand = RandomEngine.getInstance().rnd;
+    d.v = Nd4j.rand(d.v.shape(), -scale, scale, rand);
   }
 
   public static void randomBernoulli(Tensor d, double p, double scale) {
-    Random rand = RandomEngine.getInstance().rnd;
+    DefaultRandom rand = RandomEngine.getInstance().rnd;
     for (int i = 0; i < d.v.length(); ++i) {
       d.v.putScalar(i, rand.nextDouble() <= p ? scale : 0);
     }
