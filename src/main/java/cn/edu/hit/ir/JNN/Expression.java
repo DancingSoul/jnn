@@ -84,8 +84,7 @@ public class Expression {
     public static Expression logistic(final Expression x) {
       return new Expression(x.pg, x.pg.addFunction(new LogisticSigmoid(Arrays.asList(x.i))));
     }
-    
-    
+
     public static Expression squaredDistance(final Expression x, final Expression y) {
       return new Expression(x.pg, x.pg.addFunction(
           new SquaredEuclideanDistance(Arrays.asList(x.i, y.i))));
