@@ -33,6 +33,10 @@ public class Tensor implements Serializable {
 		d = new Dim(d_);
 		v = v_.dup();
 	}
+	public Tensor(final Tensor t) {
+		d = new Dim(t.d);
+		v = t.v.dup();
+	}
 
 	//Get the data as a vector
 	//this returns the full tensor contents even if is has many dimensions

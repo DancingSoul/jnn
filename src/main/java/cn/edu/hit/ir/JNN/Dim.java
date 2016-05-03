@@ -1,13 +1,15 @@
 package cn.edu.hit.ir.JNN;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 
-public class Dim {
+public class Dim implements Serializable {
   /**
    * Dim is the class for storing the Dimension for a Tensor. Currently, only
    * two dimension is actually supported in JNN.
    */
+  private static final long serialVersionUID = 2238574422776967031L;
   final int JNN_MAX_TENSOR_DIM = 7;
   public int d[] = new int[JNN_MAX_TENSOR_DIM];
   public int nd; // number of dimensions

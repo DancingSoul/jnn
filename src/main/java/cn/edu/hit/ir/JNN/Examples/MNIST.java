@@ -11,7 +11,8 @@ import cn.edu.hit.ir.JNN.Dim;
 import cn.edu.hit.ir.JNN.Expression;
 import cn.edu.hit.ir.JNN.Model;
 import cn.edu.hit.ir.JNN.Parameters;
-import cn.edu.hit.ir.JNN.TensorUtils;
+import cn.edu.hit.ir.JNN.Utils.SerializationUtils;
+import cn.edu.hit.ir.JNN.Utils.TensorUtils;
 import cn.edu.hit.ir.JNN.Trainers.SimpleSGDTrainer;
 
 class MLCBuilder {
@@ -37,19 +38,19 @@ class MLCBuilder {
     Expression x = Expression.Creator.input(cg, Dim.create(784), xValues);
 
     Expression h = Expression.Creator.logistic(
-        Expression.Creator.add(Expression.Creator.multiply(W, x), b));
+            Expression.Creator.add(Expression.Creator.multiply(W, x), b));
     return Expression.Creator.logistic(
-        Expression.Creator.add(Expression.Creator.multiply(V, h), a));
+            Expression.Creator.add(Expression.Creator.multiply(V, h), a));
   }
 }
 
 public class MNIST {
   public static void readFile(String fileName, Vector <Vector<Double> > x,
                               Vector <Vector<Double> > y) {
-    try { 
+    try {
       BufferedReader reader = new BufferedReader(new FileReader(fileName));
       String line = null;
-      while((line = reader.readLine()) != null){ 
+      while((line = reader.readLine()) != null){
         String item[] = line.split(",");
 
         Vector <Double> vec = new Vector<Double>(784);
@@ -92,6 +93,7 @@ public class MNIST {
     SimpleSGDTrainer sgd = new SimpleSGDTrainer(m);
     MLCBuilder mlc = new MLCBuilder(m);
 
+    SerializationUtils.loadModel("MNIST.obj", m);
     Vector<Integer> label = new Vector<Integer>();
     label.setSize(xTrain.size());
     for (int i = 0; i < label.size(); i++) {
@@ -152,5 +154,6 @@ public class MNIST {
       //System.out.println(mx + " " + p1 + " : " + p2);
     }
     System.err.println(cnt + " / " + xTest.size());
+    SerializationUtils.save("MNIST.obj", m);
   }
 }

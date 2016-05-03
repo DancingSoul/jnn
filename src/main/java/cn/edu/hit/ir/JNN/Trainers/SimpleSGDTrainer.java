@@ -23,7 +23,7 @@ public class SimpleSGDTrainer extends AbstractTrainer {
   }
 
   public void update(double scale) {
-    update(model.lookupParametersList(), model.paramtersList(), scale);
+    update(model.lookupParametersList(), model.parametersList(), scale);
   }
 
   public void update(final Vector<LookupParameters> lookupParams,

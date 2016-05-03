@@ -37,12 +37,11 @@ public class LogisticSigmoid extends Node {
   public void forwardImpl(final Vector<Tensor> xs, Tensor fx) {
     assert(xs.size() == 1);
 
-    for (int i = 0; i < fx.v.length(); ++i) {
+    /*for (int i = 0; i < fx.v.length(); ++i) {
       fx.v.putScalar(i, sigmoid(xs.get(0).v.getDouble(i)));
-    }
+    }*/
 
-    //Nd4j.getExecutioner().exec(new Sigmoid(xs.get(0).v, fx.v));
-
+    Nd4j.getExecutioner().exec(new Sigmoid(xs.get(0).vec(), fx.vec()));
   }
 
   @Override
@@ -51,9 +50,8 @@ public class LogisticSigmoid extends Node {
     for (int i = 0; i < fx.v.length(); ++i) {
       double y = fx.v.getDouble(i);
       dEdxi.v.putScalar(i, dEdf.v.getDouble(i) * y * (1 - y) + dEdxi.v.getDouble(i));
-
     }
-    //dEdxi.v.addi(dEdf.v.muli(fx.v).muli(fx.v.rsub(1.)));
+    //dEdxi.vec().addi(dEdf.v.muli(fx.v).muli(fx.v.rsub(1.)));
   }
 
   public Dim dim;

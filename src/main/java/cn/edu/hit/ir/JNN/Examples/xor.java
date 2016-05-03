@@ -7,8 +7,10 @@ import cn.edu.hit.ir.JNN.ComputationGraph;
 import cn.edu.hit.ir.JNN.Dim;
 import cn.edu.hit.ir.JNN.Expression;
 import cn.edu.hit.ir.JNN.Model;
-import cn.edu.hit.ir.JNN.TensorUtils;
+import cn.edu.hit.ir.JNN.Utils.SerializationUtils;
+import cn.edu.hit.ir.JNN.Utils.TensorUtils;
 import cn.edu.hit.ir.JNN.Trainers.SimpleSGDTrainer;
+import org.nd4j.linalg.api.ndarray.INDArray;
 
 public class xor {
   public static void main(String args[]){
@@ -18,12 +20,16 @@ public class xor {
     Model m = new Model();
     SimpleSGDTrainer sgd = new SimpleSGDTrainer(m);
     ComputationGraph cg = new ComputationGraph();
-    
+
+
+
     Expression W = Expression.Creator.parameter(cg, m.addParameters(Dim.create(HIDDEN_SIZE, 2)));
     Expression b = Expression.Creator.parameter(cg, m.addParameters(Dim.create(HIDDEN_SIZE)));
     Expression V = Expression.Creator.parameter(cg, m.addParameters(Dim.create(1, HIDDEN_SIZE)));
     Expression a = Expression.Creator.parameter(cg, m.addParameters(Dim.create(1)));
-    
+
+    SerializationUtils.loadModel("xor.obj", m);
+
     Vector<Double> xValues = new Vector<Double>(2);
     
     Expression x = Expression.Creator.input(cg, Dim.create(2), xValues);
@@ -48,12 +54,13 @@ public class xor {
         // cg.gradientCheck();
         lossIter += TensorUtils.toScalar(cg.forward());
         cg.backward();
-        System.out.println(m.gradientCheck());
+        //m.gradientCheck();
         sgd.update(1.0);
       }
       sgd.updateEpoch();
       lossIter /= 4.0;
       System.out.println("E = " + lossIter);
     }
+    //SerializationUtils.save("xor.obj", m);
   }
 }

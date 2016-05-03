@@ -1,9 +1,10 @@
 package cn.edu.hit.ir.JNN;
 
 import java.util.Arrays;
+
+import cn.edu.hit.ir.JNN.Utils.TensorUtils;
 import org.junit.Test;
 import org.junit.Assert;
-import org.nd4j.linalg.factory.NDArrayFactory;
 import org.nd4j.linalg.factory.Nd4j;
 
 /**
