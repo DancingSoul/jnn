@@ -1,6 +1,6 @@
 package cn.edu.hit.ir.JNN;
 
-import org.nd4j.linalg.api.ndarray.INDArray;
+import cn.edu.hit.ir.JNN.Utils.TensorUtils;
 import org.nd4j.linalg.factory.Nd4j;
 
 import java.util.HashSet;

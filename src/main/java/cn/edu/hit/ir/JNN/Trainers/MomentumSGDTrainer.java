@@ -1,6 +1,7 @@
 package cn.edu.hit.ir.JNN.Trainers;
 
 import cn.edu.hit.ir.JNN.*;
+import cn.edu.hit.ir.JNN.Utils.ShadowUtils;
 import org.nd4j.linalg.api.ndarray.INDArray;
 
 import java.util.Vector;
@@ -35,11 +36,11 @@ public class MomentumSGDTrainer extends AbstractTrainer{
     }
     final double gscale = clipGradients();
     int pi = 0;
-    for (Parameters p : model.paramtersList()) {
+    for (Parameters p : model.parametersList()) {
       Tensor v = vp.get(pi++).h;
       INDArray reg = p.values.vec().mul(lambda);
       v.v = v.vec().mul(momentum).sub(p.g.vec().mul(eta * scale * gscale));
-      p.values.vec().add(v.vec().sub(reg));
+      p.values.vec().addi(v.v.sub(reg));
       p.clear();
     }
     pi = 0;
@@ -49,7 +50,7 @@ public class MomentumSGDTrainer extends AbstractTrainer{
         Tensor v = vx.get(i);
         INDArray reg = p.values.get(i).vec().mul(lambda);
         v.v = v.vec().mul(momentum).sub(p.grads.get(i).vec().mul(eta * scale * gscale));
-        p.values.get(i).vec().add(v.vec().sub(reg));
+        p.values.get(i).vec().addi(v.v.sub(reg));
       }
       p.clear();
     }

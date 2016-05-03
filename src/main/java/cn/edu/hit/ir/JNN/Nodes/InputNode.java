@@ -4,7 +4,7 @@ import java.util.Vector;
 
 import cn.edu.hit.ir.JNN.Dim;
 import cn.edu.hit.ir.JNN.Tensor;
-import cn.edu.hit.ir.JNN.TensorUtils;
+import cn.edu.hit.ir.JNN.Utils.TensorUtils;
 
 public class InputNode extends Node {
   public InputNode(final Dim d, final Vector<Double> dat) {

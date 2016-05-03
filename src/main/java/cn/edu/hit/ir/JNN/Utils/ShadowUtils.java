@@ -1,4 +1,6 @@
-package cn.edu.hit.ir.JNN;
+package cn.edu.hit.ir.JNN.Utils;
+
+import cn.edu.hit.ir.JNN.*;
 
 import java.util.Vector;
 
@@ -8,8 +10,8 @@ import java.util.Vector;
 public class ShadowUtils {
   //one per element in model.parametersList
   public static Vector<ShadowParameters> AllocateShadowParameters(final Model m) {
-    Vector<ShadowParameters> v = new Vector<ShadowParameters>(m.paramtersList().size());
-    for (Parameters p : m.paramtersList()) {
+    Vector<ShadowParameters> v = new Vector<ShadowParameters>(m.parametersList().size());
+    for (Parameters p : m.parametersList()) {
       v.addElement(new ShadowParameters(p));
     }
     return v;

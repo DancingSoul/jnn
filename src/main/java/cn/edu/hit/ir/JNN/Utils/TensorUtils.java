@@ -1,10 +1,12 @@
-package cn.edu.hit.ir.JNN;
+package cn.edu.hit.ir.JNN.Utils;
 
+import cn.edu.hit.ir.JNN.Dim;
+import cn.edu.hit.ir.JNN.RandomEngine;
+import cn.edu.hit.ir.JNN.Tensor;
 import org.nd4j.linalg.api.rng.DefaultRandom;
 import org.nd4j.linalg.factory.Nd4j;
 
 import java.util.List;
-import java.util.Random;
 import java.util.Vector;
 
 public class TensorUtils {
@@ -19,8 +21,8 @@ public class TensorUtils {
   }
 
   public static void zero(Tensor d) {
-    d.v = Nd4j.zeros(d.v.shape());
-    //constant(d, 0d);
+    //d.v = Nd4j.zeros(d.v.shape());
+    constant(d, 0d); //I think assign is better than create new class.
   }
 
   public static void randomize(Tensor d) {
@@ -64,9 +66,9 @@ public class TensorUtils {
   }
 
   public static void copyElements(final Tensor tgt, final Tensor src) {
-    for (int i = 0; i < src.v.length(); ++i) {
-      tgt.v.putScalar(i, src.v.getDouble(i));
-    }
+    tgt.vec();
+    src.vec();
+    tgt.v.assign(src.v);
   }
   
   public static double toScalar(Tensor t) {
@@ -75,8 +77,8 @@ public class TensorUtils {
   }
   public static Vector<Double> toVector(Tensor t) {
     Vector<Double> res = new Vector<Double>(t.d.size());
-    for (int i = 0; i < t.v.size(0); i++) {
-      res.addElement(t.v.getDouble(i, 0));
+    for (int i = 0; i < t.v.length(); i++) {
+      res.addElement(t.v.getDouble(i));
     }  
     return res;
   }

@@ -1,7 +1,7 @@
 package cn.edu.hit.ir.JNN;
 
 
-import org.nd4j.linalg.factory.Nd4j;
+import cn.edu.hit.ir.JNN.Utils.TensorUtils;
 
 public class Parameters extends AbstractParameters {
   public Dim dim;

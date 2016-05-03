@@ -5,8 +5,7 @@ import java.util.Vector;
 
 import cn.edu.hit.ir.JNN.Dim;
 import cn.edu.hit.ir.JNN.Tensor;
-import cn.edu.hit.ir.JNN.TensorUtils;
-import org.nd4j.linalg.api.ndarray.INDArray;
+import cn.edu.hit.ir.JNN.Utils.TensorUtils;
 
 public class Dropout extends Node {
   public double p;

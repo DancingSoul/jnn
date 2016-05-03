@@ -1,9 +1,6 @@
 package cn.edu.hit.ir.JNN;
 
-import java.lang.reflect.Constructor;
-import java.util.List;
 import java.util.Vector;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import cn.edu.hit.ir.JNN.Nodes.ConstParameterNode;
 import cn.edu.hit.ir.JNN.Nodes.InputNode;
@@ -11,6 +8,7 @@ import cn.edu.hit.ir.JNN.Nodes.LookupNode;
 import cn.edu.hit.ir.JNN.Nodes.Node;
 import cn.edu.hit.ir.JNN.Nodes.ParameterNode;
 import cn.edu.hit.ir.JNN.Nodes.ScalarInputNode;
+import cn.edu.hit.ir.JNN.Utils.TensorUtils;
 
 public class ComputationGraph {
   public Vector<Node> nodes;
