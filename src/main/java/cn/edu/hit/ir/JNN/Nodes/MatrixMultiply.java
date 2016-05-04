@@ -7,6 +7,7 @@ import java.util.Vector;
 
 import cn.edu.hit.ir.JNN.Dim;
 import cn.edu.hit.ir.JNN.Tensor;
+import org.nd4j.linalg.api.ndarray.INDArray;
 
 public class MatrixMultiply extends Node {
   public MatrixMultiply(List<Integer> x) {

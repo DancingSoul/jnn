@@ -18,14 +18,17 @@ public class AdagradTrainer extends AbstractTrainer {
   public AdagradTrainer(Model m) {
     this(m, 1E-6, 0.1, 1e-20);
   }
+
   public AdagradTrainer(Model m, double lam, double e0, double eps) {
     super(m, lam, e0);
     epsilon = eps;
     shadowParamsAllocated = false;
   }
+
   public void update() {
     this.update(1.0);
   }
+
   public void update(double scale) {
     //executed on the first iteration to create vectors to store the velocity
     if (!shadowParamsAllocated) {

@@ -66,7 +66,9 @@ public class TensorUtils {
   }
 
   public static void copyElements(final Tensor tgt, final Tensor src) {
-    tgt.vec().assign(src.vec());
+    tgt.vec();
+    src.vec();
+    tgt.v.assign(src.v);
   }
   
   public static double toScalar(Tensor t) {

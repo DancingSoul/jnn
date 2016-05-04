@@ -93,7 +93,8 @@ public class MNIST {
     SimpleSGDTrainer sgd = new SimpleSGDTrainer(m);
     MLCBuilder mlc = new MLCBuilder(m);
 
-    //SerializationUtils.loadModel("MNIST.obj", m);
+
+    SerializationUtils.loadModel("MNIST.obj", m);
     Vector<Integer> label = new Vector<Integer>();
     label.setSize(xTrain.size());
     for (int i = 0; i < label.size(); i++) {
@@ -154,6 +155,7 @@ public class MNIST {
       //System.out.println(mx + " " + p1 + " : " + p2);
     }
     System.err.println(cnt + " / " + xTest.size());
-    //SerializationUtils.save("MNIST.obj", m);
+    SerializationUtils.save("MNIST.obj", m);
+
   }
 }
