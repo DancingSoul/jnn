@@ -97,7 +97,6 @@ public class Model implements Serializable {
   public boolean gradientCheck() {
     for (int i = 0; i < params.size(); i++) {
       for (int j = 0; j < params.get(i).g.v.length(); ++j) {
-          //System.out.println(params.get(i).g.v.getDouble(j) + "       " + params.get(i).gCheck.v.getDouble(j));
           if (Math.abs(params.get(i).g.v.getDouble(j) - params.get(i).gCheck.v.getDouble(j)) > 1E-5) {
             return false;
         }

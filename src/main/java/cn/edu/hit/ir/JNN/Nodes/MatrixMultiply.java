@@ -7,7 +7,6 @@ import java.util.Vector;
 
 import cn.edu.hit.ir.JNN.Dim;
 import cn.edu.hit.ir.JNN.Tensor;
-import org.nd4j.linalg.api.ndarray.INDArray;
 
 public class MatrixMultiply extends Node {
   public MatrixMultiply(List<Integer> x) {
@@ -45,10 +44,7 @@ public class MatrixMultiply extends Node {
     assert (xs.size() == 2);
     assert (fx.d.bd == Math.max(xs.get(0).d.bd, xs.get(1).d.bd));
     if (xs.get(0).d.bd == 1) {
-      INDArray x1 = xs.get(0).getBatchMatrix(0);
-      INDArray x2 = xs.get(1).colbatchMatrix();
-      //fx.v = xs.get(0).getBatchMatrix(0).mmul(xs.get(1).colbatchMatrix());
-      fx.v = x1.mmul(x2);
+      fx.v = xs.get(0).getBatchMatrix(0).mmul(xs.get(1).colbatchMatrix());
       //fx.v = xs.get(0).vec().mmul(xs.get(1).vec());
     } else {
       //...

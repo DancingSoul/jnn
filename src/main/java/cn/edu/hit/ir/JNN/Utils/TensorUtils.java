@@ -66,9 +66,7 @@ public class TensorUtils {
   }
 
   public static void copyElements(final Tensor tgt, final Tensor src) {
-    tgt.vec();
-    src.vec();
-    tgt.v.assign(src.v);
+    tgt.vec().assign(src.vec());
   }
   
   public static double toScalar(Tensor t) {
@@ -79,7 +77,7 @@ public class TensorUtils {
     Vector<Double> res = new Vector<Double>(t.d.size());
     for (int i = 0; i < t.v.length(); i++) {
       res.addElement(t.v.getDouble(i));
-    }  
+    }
     return res;
   }
   

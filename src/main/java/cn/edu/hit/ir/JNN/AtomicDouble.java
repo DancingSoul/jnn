@@ -21,6 +21,7 @@ public class AtomicDouble extends Number {
         doubleToLongBits(update));
   }
 
+  public final void add(double delta) { bits.set(doubleToLongBits(get() + delta)); }
   public final void set(double newValue) {
     bits.set(doubleToLongBits(newValue));
   }
