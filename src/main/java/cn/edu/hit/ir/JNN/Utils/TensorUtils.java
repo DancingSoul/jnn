@@ -34,6 +34,7 @@ public class TensorUtils {
     // random number generator.
     DefaultRandom rand = RandomEngine.getInstance().rnd;
     d.v = Nd4j.rand(d.v.shape(), -scale, scale, rand);
+    d.v.setOrder('f');
   }
 
   public static void randomBernoulli(Tensor d, double p, double scale) {
@@ -43,7 +44,11 @@ public class TensorUtils {
     }
   }
   
-  public static void randomizeNormal(double mean, double stddev, Tensor v) {
+  public static void randomizeNormal(double mean, double stddev, Tensor d) {
+    DefaultRandom rand = RandomEngine.getInstance().rnd;
+    for (int i = 0; i < d.v.length(); i++) {
+      d.v.putScalar(i, mean + rand.nextGaussian() * stddev);
+    }
   }
 
   public static double accessElement(Tensor d, int index) {
@@ -52,7 +57,9 @@ public class TensorUtils {
 
   public static double accessElement(Tensor d, Dim index) {
     // return v[index[0], index[1]];
-    return d.v.getDouble(index.at(0), index.at(1));
+    // return d.v.getDouble(index.at(0) * index.at(1) + index.at(1));
+    //TODO
+    return 0.0;
   }
 
   public static void setElement(Tensor v, int index, double value) {
@@ -66,8 +73,6 @@ public class TensorUtils {
   }
 
   public static void copyElements(final Tensor tgt, final Tensor src) {
-    tgt.vec();
-    src.vec();
     tgt.v.assign(src.v);
   }
   

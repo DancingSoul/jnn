@@ -54,7 +54,7 @@ public class Parameters extends AbstractParameters {
   }
 
   public void accumulateGrad(final Tensor d) {
-    g.vec().addi(d.vec());
+    g.v.addi(d.v);
   }
   public void clear() {
     TensorUtils.zero(g);

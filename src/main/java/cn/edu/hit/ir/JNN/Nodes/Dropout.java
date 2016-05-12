@@ -34,12 +34,12 @@ public class Dropout extends Node {
   public void forwardImpl(final Vector<Tensor> xs, Tensor fx) {
     aux = new Tensor(dim);
     TensorUtils.randomBernoulli(aux, 1.0 - p, 1.0 / (1.0 - p));
-    fx.v = xs.get(0).vec().mul(aux.vec());
+    fx.v = xs.get(0).v.mul(aux.v);
   }
 
   @Override
   public void backwardImpl(final Vector<Tensor> xs,
                            final Tensor fx, final Tensor dEdf, int i, Tensor dEdxi) {
-    dEdxi.vec().addi(dEdf.vec().mul(aux.vec()));
+    dEdxi.v.addi(dEdf.v.mul(aux.v));
   }
 }

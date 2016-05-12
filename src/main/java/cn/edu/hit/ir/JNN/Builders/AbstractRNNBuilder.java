@@ -11,6 +11,7 @@ public abstract class AbstractRNNBuilder {
   private Vector <Integer> head;
   
   public AbstractRNNBuilder() {
+    sm = new RNNStateMachine();
     head = new Vector<Integer>();
     cur = -1;
   }
@@ -31,7 +32,6 @@ public abstract class AbstractRNNBuilder {
     cur = -1;
     head.clear();
     startNewSequenceImpl(h0);
-    
   }
   
   public Expression addInput(final Expression x) {

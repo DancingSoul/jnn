@@ -21,55 +21,45 @@ public class Tensor implements Serializable {
 
 	public Tensor() {
 	  d = new Dim();
-	  v = Nd4j.zeros(1, 1);
+	  v = Nd4j.zeros(1);
 	}
 
   public Tensor(final Dim d_) {
     d = new Dim(d_);
-    v = Nd4j.zeros(d_.at(0), d_.at(1));
+    v = Nd4j.zeros(d.size(), 1);
+		v.setOrder('f');
   }
 
 	public Tensor(final Dim d_, final INDArray v_) {
 		d = new Dim(d_);
-		v = v_.dup();
+		v = v_.dup().reshape(v_.length());
 	}
 	public Tensor(final Tensor t) {
 		d = new Dim(t.d);
-		v = t.v.dup();
+		v = t.v.dup().reshape(t.v.length());
 	}
 
-	//Get the data as a vector
-	//this returns the full tensor contents even if is has many dimensions
-	public INDArray vec() {
-		v = v.reshape(d.size());
-		return v;
-	}
 	//Get the matrix for a particular batch
 	public INDArray getBatchMatrix(int bid) {
 		bid %= d.bd;
-		v = v.reshape(d.bd, d.batchSize());
-		return v.getRow(bid).reshape(d.at(0), d.at(1));
+		return v.reshape(d.bd, d.batchSize()).getRow(bid).reshape(d.at(0), d.at(1));
 	}
 	public void setBatchMatrix(int bid, INDArray t) {
 		bid %= d.bd;
-		v = v.reshape(d.bd, d.batchSize());
-		v.getRow(bid).assign(t.reshape(t.length()));
+		v.reshape(d.bd, d.batchSize()).getRow(bid).assign(t.reshape(t.length()));
 	}
 	public void addBatchMatrix(int bid, INDArray t) {
 		bid %= d.bd;
-		v = v.reshape(d.bd, d.batchSize());
-		v.getRow(bid).addi(t.reshape(t.length()));
+		v.reshape(d.bd, d.batchSize()).getRow(bid).addi(t.reshape(t.length()));
 	}
 	//Get the data as a matrix, where each "row" is the concatenation of rows and columns, and each "column" is batches
 	public INDArray rowcolMatrix() {
-		v = v.reshape(d.getNumRows() * d.getNumCols(), d.getNumBatchElements());
-		return v;
+		return v.reshape(d.getNumRows() * d.getNumCols(), d.getNumBatchElements());
 	}
 	//Get the data as a matrix, where each "row" is the concatenation of rows
 	//and each "column" is the concatenation of columns ans batches
 	public INDArray colbatchMatrix() {
-		v = v.reshape(d.getNumRows(), d.getNumCols() * d.getNumBatchElements());
-		return v;
+		return v.reshape(d.getNumRows(), d.getNumCols() * d.getNumBatchElements());
 	}
 	public boolean isValid() {
     if (d == null || v == null) {

@@ -30,18 +30,18 @@ public class SimpleSGDTrainer extends AbstractTrainer {
                      final Vector<Parameters> params, double scale) {
     double gscale = clipGradients();
     for (Parameters p : params) {
-      INDArray reg = p.values.vec().dup().muli(lambda);
-      p.g.vec().muli(eta * scale * gscale);
+      INDArray reg = p.values.v.dup().muli(lambda);
+      p.g.v.muli(eta * scale * gscale);
       p.g.v.addi(reg);
-      p.values.vec().subi(p.g.v);
+      p.values.v.subi(p.g.v);
       p.clear();
     }
     for (LookupParameters p : lookupParams) {
       for (Integer i : p.nonZeroGrads) {
-        INDArray reg = p.values.get(i).vec().dup().muli(lambda);
-        p.grads.get(i).vec().muli(eta * scale * gscale);
+        INDArray reg = p.values.get(i).v.dup().muli(lambda);
+        p.grads.get(i).v.muli(eta * scale * gscale);
         p.grads.get(i).v.addi(reg);
-        p.values.get(i).vec().subi(p.grads.get(i).v);
+        p.values.get(i).v.subi(p.grads.get(i).v);
       }
       p.clear();
     }

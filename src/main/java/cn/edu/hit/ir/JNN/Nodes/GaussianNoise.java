@@ -32,12 +32,13 @@ public class GaussianNoise extends Node{
 
   @Override
   public void forwardImpl(final Vector<Tensor> xs, Tensor fx) {
+    aux = new Tensor(dim);
     TensorUtils.randomizeNormal(0, stddev, aux);
-    fx.v.assign(xs.get(0).vec().add(aux.vec()));
+    fx.v.assign(xs.get(0).v.add(aux.v));
   }
   @Override
   public void backwardImpl(final Vector<Tensor> xs,
                            final Tensor fx, final Tensor dEdf, int i_, Tensor dEdxi) {
-    dEdxi.vec().addi(dEdf.vec());
+    dEdxi.v.addi(dEdf.v);
   }
 }

@@ -41,7 +41,7 @@ public class LogisticSigmoid extends Node {
       fx.v.putScalar(i, sigmoid(xs.get(0).v.getDouble(i)));
     }*/
 
-    Nd4j.getExecutioner().exec(new Sigmoid(xs.get(0).vec(), fx.vec()));
+    Nd4j.getExecutioner().exec(new Sigmoid(xs.get(0).v, fx.v));
   }
 
   @Override

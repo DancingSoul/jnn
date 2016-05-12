@@ -41,10 +41,10 @@ public class AdagradTrainer extends AbstractTrainer {
 
     for (Parameters p : model.parametersList()) {
       Tensor v = vp.get(pi++).h;
-      INDArray reg = p.values.vec().mul(lambda);
-      INDArray g = p.g.vec().mul(scale * gscale);
+      INDArray reg = p.values.v.mul(lambda);
+      INDArray g = p.g.v.mul(scale * gscale);
       INDArray g2 = g.mul(g);
-      v.vec().addi(g2);
+      v.v.addi(g2);
       //TODO
     }
     pi = 0;

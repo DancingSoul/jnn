@@ -36,10 +36,8 @@ public class Rectify extends Node {
   @Override
   public void backwardImpl(final Vector<Tensor> xs,
                            final Tensor fx, final Tensor dEdf, int i_, Tensor dEdxi) {
-    for (int i = 0; i < fx.v.size(0); ++i) {
-      for (int j = 0; j < fx.v.size(1); ++j) {
-        dEdxi.v.putScalar(new int[]{i, j},
-            (fx.v.getDouble(i, j) != 0. ? dEdf.v.getDouble(i, j) : 0.) + dEdxi.v.getDouble(i, j));
+    for (int i = 0; i < fx.v.length(); ++i) {{
+        dEdxi.v.putScalar(i, (fx.v.getDouble(i) != 0. ? dEdf.v.getDouble(i) : 0.) + dEdxi.v.getDouble(i));
       }
     }
   }

@@ -72,6 +72,9 @@ class RNNLanguageModel {
     Vector<Expression> fwds = new Vector<Expression>();
     Vector<Expression> revs = new Vector<Expression>();
 
+    iWords.setSize(slen);
+    fwds.setSize(slen);
+    revs.setSize(slen);
     //read sequence from left to reght
     l2rbuilder.addInput(Expression.Creator.lookup(cg, pW, new Vector<Integer>(Arrays.asList(kSOS))));
     for (int t = 0; t < slen; ++t) {
@@ -114,8 +117,8 @@ class RNNLanguageModel {
 
 
 public class TagBilstm {
-  static String trainName = "";
-  static String devName = "";
+  static String trainName = "pku-train.pos";
+  static String devName = "pku-test.pos";
   static Dict d = new Dict();
   static Dict td = new Dict();
   static int VOCAB_SIZE = 0;
@@ -191,9 +194,11 @@ public class TagBilstm {
         //build graph for this instance
         ComputationGraph cg = new ComputationGraph();
         lm.BuildTaggingGraph(trainX.get(si), trainY.get(si), cg, correct, ttags);
+        //cg.gradientCheck();
         loss += TensorUtils.toScalar(cg.forward());
         cg.backward();
         sgd.update(1.0);
+        //System.out.println(model.gradientCheck());
         ++lines;
       }
       //sgd.status();

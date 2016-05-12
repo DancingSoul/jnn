@@ -31,7 +31,7 @@ public class AffineTransform extends Node {
     for (int i = 1; i < xs.size(); i += 2) {
       if (xs.get(i).getNumCols() != xs.get(i + 1).getNumRows() ||
               xs.get(0).getNumRows() != xs.get(i).getNumRows() ||
-              xs.get(0).getNumCols() != xs.get(i).getNumCols()) {
+              xs.get(0).getNumCols() != xs.get(i + 1).getNumCols()) {
         StringBuilder s = new StringBuilder(
                 "Bad dimensions for AffineTransform: ");
         throw new IllegalArgumentException(s.toString());
@@ -50,14 +50,14 @@ public class AffineTransform extends Node {
   public void forwardImpl(final Vector<Tensor> xs, Tensor fx) {
     assert(xs.size() % 2 == 1);
     if (xs.size() == 1) {
-      fx.v = xs.get(0).v.dup();
+      fx.v = xs.get(0).v;
       return;
     } else {
       // Add, using broadcasting or not
       if (fx.d.bd > 1 && xs.get(0).d.bd == 1) {
         fx.rowcolMatrix();
         for (int i = 0; i < fx.v.size(1); i++) {
-          fx.v.getColumn(i).assign(xs.get(0).vec().transpose());
+          fx.v.getColumn(i).assign(xs.get(0).v.transpose());
         }
       } else {
         for (int b = 0; b < fx.d.bd; ++b) {
@@ -67,7 +67,7 @@ public class AffineTransform extends Node {
       //Multiply
       for (int i = 1; i < xs.size(); i += 2) {
         if (xs.get(i).d.bd == 1 && xs.get(i + 1).d.bd == fx.d.bd) {
-          fx.vec().addi(xs.get(i).getBatchMatrix(0).mmul(xs.get(i + 1).colbatchMatrix()).reshape(fx.d.size()));
+          fx.v.addi(xs.get(i).getBatchMatrix(0).mmul(xs.get(i + 1).colbatchMatrix()).reshape(fx.d.size(), 1));
         } else {
           assert(xs.get(i + 1).d.bd == 1 || xs.get(i + 1).d.bd == xs.get(i).d.bd);
           for (int b = 0; b < fx.d.bd; ++b) {
@@ -85,9 +85,17 @@ public class AffineTransform extends Node {
     if (i == 0) {
       dEdxi.v.addi(dEdf.v);
     } else if (i % 2 == 1){
-      dEdxi.v.addi(dEdf.v.mmul(xs.get(i + 1).v.transpose()));
+      int maxB = Math.max(dEdf.d.bd, xs.get(i + 1).d.bd);
+      for (int b = 0; b < maxB; ++b)
+        dEdxi.getBatchMatrix(b).addi(dEdf.getBatchMatrix(b).mmul(xs.get(i + 1).getBatchMatrix(b).transpose()));
     } else {
-      dEdxi.v.addi(xs.get(i - 1).v.transpose().mmul(dEdf.v));
+      int maxB = Math.max(xs.get(i - 1).d.bd, dEdf.d.bd);
+      if (xs.get(i - 1).d.bd == 1 && dEdxi.d.bd == dEdf.d.bd) {
+        dEdxi.colbatchMatrix().addi(xs.get(i - 1).getBatchMatrix(0).transpose().mmul(dEdf.colbatchMatrix()));
+      } else {
+        for (int b = 0; b < maxB; ++b)
+          dEdxi.getBatchMatrix(b).addi(xs.get(i - 1).getBatchMatrix(b).transpose().mmul(dEdf.getBatchMatrix(b)));
+      }
     }
   }
 }

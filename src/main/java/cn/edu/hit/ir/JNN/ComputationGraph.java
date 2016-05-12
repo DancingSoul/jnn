@@ -155,7 +155,7 @@ public class ComputationGraph {
   }
   
   public void checkParameterNode(Node a) {
-    final double eta = 1E-8;
+    final double eta = 1E-5;
     Parameters b = ((ParameterNode)a).params;
     for (int i = 0; i < b.values.v.length(); ++i){
       b.values.v.putScalar(i, b.values.v.getDouble(i) + eta);
@@ -168,7 +168,7 @@ public class ComputationGraph {
   }
   
   public void checkLookupNode(Node a) {
-    final double eta = 1E-8;
+    final double eta = 1E-5;
     LookupParameters b = ((LookupNode)a).params;
     Vector <Integer> c = ((LookupNode)a).indices;
     for (int k = 0; k < c.size(); k++) {

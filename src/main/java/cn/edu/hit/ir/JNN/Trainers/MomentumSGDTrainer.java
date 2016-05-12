@@ -38,9 +38,9 @@ public class MomentumSGDTrainer extends AbstractTrainer{
     int pi = 0;
     for (Parameters p : model.parametersList()) {
       Tensor v = vp.get(pi++).h;
-      INDArray reg = p.values.vec().mul(lambda);
-      v.v = v.vec().mul(momentum).sub(p.g.vec().mul(eta * scale * gscale));
-      p.values.vec().addi(v.v.sub(reg));
+      INDArray reg = p.values.v.mul(lambda);
+      v.v = v.v.mul(momentum).sub(p.g.v.mul(eta * scale * gscale));
+      p.values.v.addi(v.v.sub(reg));
       p.clear();
     }
     pi = 0;
@@ -48,9 +48,9 @@ public class MomentumSGDTrainer extends AbstractTrainer{
       Vector<Tensor> vx = vlp.get(pi++).h;
       for (Integer i : p.nonZeroGrads) {
         Tensor v = vx.get(i);
-        INDArray reg = p.values.get(i).vec().mul(lambda);
-        v.v = v.vec().mul(momentum).sub(p.grads.get(i).vec().mul(eta * scale * gscale));
-        p.values.get(i).vec().addi(v.v.sub(reg));
+        INDArray reg = p.values.get(i).v.mul(lambda);
+        v.v = v.v.mul(momentum).sub(p.grads.get(i).v.mul(eta * scale * gscale));
+        p.values.get(i).v.addi(v.v.sub(reg));
       }
       p.clear();
     }

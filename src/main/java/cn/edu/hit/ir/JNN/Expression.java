@@ -94,7 +94,7 @@ public class Expression {
           new ConstantMinusX(Arrays.asList(x.i), p)));
     }
     public static Expression affineTransform(final List<Expression> xs) {
-      assert(xs.size() == 0);
+      assert(xs.size() != 0);
       return new Expression(xs.get(0).pg, xs.get(0).pg.addFunction(
           new AffineTransform(getIndices(xs))));
     }
@@ -111,7 +111,7 @@ public class Expression {
 
 
     public static Expression sum(final List<Expression> xs) {
-      assert(xs.size() == 0);
+      assert(xs.size() != 0);
       return new Expression(xs.get(0).pg, xs.get(0).pg.addFunction(
               new Sum(getIndices(xs))));
     }
@@ -119,7 +119,7 @@ public class Expression {
     public static Vector <Integer> getIndices(List <Expression> xs) {
       Vector <Integer> res = new Vector<Integer>(xs.size());
       for (int i = 0; i < xs.size(); ++i) {
-        res.set(i, xs.get(i).i);
+        res.add(i, xs.get(i).i);
       }
       return res;
     }

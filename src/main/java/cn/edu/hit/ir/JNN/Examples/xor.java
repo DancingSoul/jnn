@@ -28,7 +28,7 @@ public class xor {
     Expression V = Expression.Creator.parameter(cg, m.addParameters(Dim.create(1, HIDDEN_SIZE)));
     Expression a = Expression.Creator.parameter(cg, m.addParameters(Dim.create(1)));
 
-    SerializationUtils.loadModel("xor.obj", m);
+    //SerializationUtils.loadModel("xor.obj", m);
 
     Vector<Double> xValues = new Vector<Double>(2);
     
@@ -42,6 +42,7 @@ public class xor {
     Expression yPredict = Expression.Creator.add(Expression.Creator.multiply(V, h), a);
     Expression loss = Expression.Creator.squaredDistance(yPredict, y);
 
+
     xValues.setSize(2);
     for (int iteration = 0; iteration < ITERATIONS; ++iteration) {
       double lossIter = 0.0;
@@ -51,10 +52,10 @@ public class xor {
         xValues.set(0, x1 == 1 ? 1.0 : -1.0);
         xValues.set(1, x2 == 1 ? 1.0 : -1.0);
         yValue.set((x1 != x2) ? 1.0 : -1.0);
-        // cg.gradientCheck();
+        cg.gradientCheck();
         lossIter += TensorUtils.toScalar(cg.forward());
         cg.backward();
-        //m.gradientCheck();
+        System.out.println(m.gradientCheck());
         sgd.update(1.0);
       }
       sgd.updateEpoch();

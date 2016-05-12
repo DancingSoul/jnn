@@ -30,12 +30,12 @@ public class ConstantMinusX extends Node {
 
   @Override
   public void forwardImpl(final Vector<Tensor> xs, Tensor fx) {
-    fx.v = xs.get(0).v.subi(c);
+    fx.v = xs.get(0).v.sub(c).neg();
   }
 
   @Override
   public void backwardImpl(final Vector<Tensor> xs,
                            final Tensor fx, final Tensor dEdf, int i, Tensor dEdxi) {
-    dEdxi.vec().subi(dEdf.vec());
+    dEdxi.v.subi(dEdf.v);
   }
 }

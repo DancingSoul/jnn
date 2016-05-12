@@ -141,12 +141,15 @@ public class Dim implements Serializable {
         "Cannot transpose Dim Object with more than 2 dimensions");
   }
 
-  public final boolean equals(final Dim b) {
-    if (nd != b.nd || bd != b.bd) {
+  public final boolean equals(Dim b) {
+    Dim a = this.truncate();
+    b = b.truncate();
+    if (a.nd != b.nd || a.bd != b.bd) {
       return false;
     }
-    for (int i = 0; i < nd; i++) {
-      if (d[i] != b.d[i]) {
+
+    for (int i = 0; i < a.nd; i++) {
+      if (a.d[i] != b.d[i]) {
         return false;
       }
     }

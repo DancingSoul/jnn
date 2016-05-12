@@ -19,7 +19,7 @@ public class CwiseMultiply extends Node {
   public Dim dimForward(final Vector<Dim> xs) {
     assert(xs.size() == 2);
     Dim d = xs.get(0).truncate();
-    if (d.singleBatch() != xs.get(1).truncate().singleBatch()) {
+    if (!d.singleBatch().equals(xs.get(1).truncate().singleBatch())) {
       StringBuilder s = new StringBuilder(
               "Mismatched input dimensions in CwiseMultiply: ");
       s.append(xs.get(0)).append(" ").append(xs.get(1));
@@ -37,7 +37,7 @@ public class CwiseMultiply extends Node {
   @Override
   public void forwardImpl(final Vector<Tensor> xs, Tensor fx) {
     assert(xs.size() == 2);
-    fx.v = xs.get(0).vec().mul(xs.get(1).vec());
+    fx.v = xs.get(0).v.mul(xs.get(1).v);
   }
 
   @Override
@@ -45,9 +45,9 @@ public class CwiseMultiply extends Node {
                            final Tensor fx, final Tensor dEdf, int i, Tensor dEdxi) {
     assert(xs.size() == 2);
     if (i == 0) {
-      dEdxi.vec().addi(dEdf.vec().mul(xs.get(1).vec()));
+      dEdxi.v.addi(dEdf.v.mul(xs.get(1).v));
     } else {
-      dEdxi.vec().addi(dEdf.vec().mul(xs.get(0).vec()));
+      dEdxi.v.addi(dEdf.v.mul(xs.get(0).v));
     }
   }
 }

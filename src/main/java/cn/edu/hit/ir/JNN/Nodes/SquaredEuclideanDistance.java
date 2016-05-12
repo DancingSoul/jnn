@@ -39,7 +39,7 @@ public class SquaredEuclideanDistance extends Node {
   @Override
   public void forwardImpl(final Vector<Tensor> xs, Tensor fx) {
     assert (xs.size() == 2);
-    fx.v.putScalar(0, xs.get(0).vec().squaredDistance(xs.get(1).vec()));
+    fx.v.putScalar(0, xs.get(0).v.squaredDistance(xs.get(1).v));
   }
 
   @Override
@@ -49,6 +49,6 @@ public class SquaredEuclideanDistance extends Node {
 
     double scale = dEdf.v.getDouble(0) * 2;
     if (i == 1) scale = -scale;
-    dEdxi.vec().addi(xs.get(0).vec().sub(xs.get(1).vec()).mul(scale));
+    dEdxi.v.addi(xs.get(0).v.sub(xs.get(1).v).mul(scale));
   }
 }
