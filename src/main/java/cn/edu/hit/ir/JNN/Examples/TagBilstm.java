@@ -9,7 +9,7 @@ import cn.edu.hit.ir.JNN.Trainers.SimpleSGDTrainer;
 import cn.edu.hit.ir.JNN.Utils.DictUtils;
 import cn.edu.hit.ir.JNN.Utils.SerializationUtils;
 import cn.edu.hit.ir.JNN.Utils.TensorUtils;
-
+import java.util.Date;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.Arrays;
@@ -180,7 +180,8 @@ public class TagBilstm {
     boolean first = true;
     int report = 0;
     int lines = 0;
-    while (true) {
+    Long startOfTraining = new Date().getTime();
+    for (int t = 0; t < 60000; t++){
       double loss = 0.0;
       AtomicDouble correct = new AtomicDouble(0.0);
       AtomicDouble ttags = new AtomicDouble(0.0);
@@ -195,6 +196,7 @@ public class TagBilstm {
         ComputationGraph cg = new ComputationGraph();
         lm.BuildTaggingGraph(trainX.get(si), trainY.get(si), cg, correct, ttags);
         //cg.gradientCheck();
+        ++si;
         loss += TensorUtils.toScalar(cg.forward());
         cg.backward();
         sgd.update(1.0);
@@ -203,7 +205,7 @@ public class TagBilstm {
       }
       //sgd.status();
       System.err.println("E = " + (loss / ttags.doubleValue()) + " ppl = " + Math.exp(loss / ttags.doubleValue())
-              + " (acc = " + (correct.doubleValue() / ttags.doubleValue()) + ")");
+              + " (acc = " + (correct.doubleValue() / ttags.doubleValue()) + ")" + "lines : " + lines);
 
       //show socre on dev data
       report++;
@@ -227,5 +229,6 @@ public class TagBilstm {
                 + " acc = " + (dcorr.doubleValue() / dtags.doubleValue()));
       }
     }
+    System.err.println("consume: " + (new Date().getTime() - startOfTraining));
   }
 }
