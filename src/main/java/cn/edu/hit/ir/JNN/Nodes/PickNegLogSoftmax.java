@@ -37,10 +37,11 @@ public class PickNegLogSoftmax extends Node{
 
   private double logSumExp(INDArray x) {
     double sum = 0.0;
+    double m = x.maxNumber().doubleValue();
     for (int i = 0; i < x.length(); ++i) {
-      sum += Math.exp(x.getDouble(i));
+      sum += Math.exp(x.getDouble(i) - m);
     }
-    return Math.log(sum);
+    return Math.log(sum) + m;
   }
   @Override
   public void forwardImpl(final Vector<Tensor> xs, Tensor fx) {

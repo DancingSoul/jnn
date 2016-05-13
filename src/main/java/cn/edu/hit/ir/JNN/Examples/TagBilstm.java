@@ -150,7 +150,9 @@ public class TagBilstm {
     Vector<Vector<Integer>> trainX = new Vector<Vector<Integer>>();
     Vector<Vector<Integer>> trainY = new Vector<Vector<Integer>>();
     System.err.println("Reading training data from "  + trainName + "...") ;
-
+    td.convert("*");
+    d.convert("<s>");
+    d.convert("</s>");
     readFile(trainName, trainX, trainY);
     d.freeze();
     td.freeze();
@@ -196,7 +198,7 @@ public class TagBilstm {
         ComputationGraph cg = new ComputationGraph();
         lm.BuildTaggingGraph(trainX.get(si), trainY.get(si), cg, correct, ttags);
         //cg.gradientCheck();
-        ++si;
+        //++si;
         loss += TensorUtils.toScalar(cg.forward());
         cg.backward();
         sgd.update(1.0);
