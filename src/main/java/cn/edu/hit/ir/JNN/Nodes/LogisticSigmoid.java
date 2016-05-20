@@ -48,11 +48,11 @@ public class LogisticSigmoid extends Node {
   @Override
   public void backwardImpl(final Vector<Tensor> xs,
       final Tensor fx, final Tensor dEdf, int i_, Tensor dEdxi) {
-    //for (int i = 0; i < fx.v.length(); ++i) {
-      // double y = fx.v.getDouble(i);
-      //dEdxi.v.putScalar(i, dEdf.v.getDouble(i) * y * (1 - y) + dEdxi.v.getDouble(i));
-    //}
-    Nd4j.getExecutioner().exec(new SigmoidDerivative(xs.get(0).v, dEdxi.v));
+    for (int i = 0; i < fx.v.length(); ++i) {
+      double y = fx.v.getDouble(i);
+      dEdxi.v.putScalar(i, dEdf.v.getDouble(i) * y * (1 - y) + dEdxi.v.getDouble(i));
+    }
+    //Nd4j.getExecutioner().exec(new SigmoidDerivative(xs.get(0).v, dEdxi.v));
     //dEdxi.vec().addi(dEdf.v.muli(fx.v).muli(fx.v.rsub(1.)));
   }
 
