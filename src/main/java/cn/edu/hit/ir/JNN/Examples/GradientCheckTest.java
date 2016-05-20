@@ -11,10 +11,15 @@ import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.indexing.NDArrayIndex;
 
 import java.util.Date;
+import java.util.Vector;
 
 public class GradientCheckTest {
   public static void main(String args[]) {
-
+    Vector<Integer> t1 = new Vector<Integer>();
+    t1.addElement(1);
+    Vector<Integer> t2 = new Vector<Integer>(t1);
+    t2.addElement(2);
+    System.out.println(t2.size() + " " + t1.size());
     Model m = new Model();
     SimpleSGDTrainer sgd = new SimpleSGDTrainer(m);
     ComputationGraph cg = new ComputationGraph();

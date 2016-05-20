@@ -24,9 +24,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 class RNNLanguageModel {
   private final static double pdrop = 0.5;
   private final static int LAYERS = 1;
-  private final static int INPUT_DIM = 128;
-  private final static int HIDDEN_DIM = 128;
-  private final static int TAG_HIDDEN_DIM= 32;
+  private final static int INPUT_DIM = 32;
+  private final static int HIDDEN_DIM = 32;
+  private final static int TAG_HIDDEN_DIM= 8;
   private final static int TAG_DIM = 32;
   public static int TAG_SIZE = 0;
   public static int VOCAB_SIZE = 0;
@@ -192,17 +192,17 @@ public class TagBilstm {
           si = 0;
           if (first) { first = false; } else { sgd.updateEpoch(); }
           System.err.println("SHUFFLE");
-          Collections.shuffle(order);
+          //Collections.shuffle(order);
         }
         //build graph for this instance
         ComputationGraph cg = new ComputationGraph();
-        lm.BuildTaggingGraph(trainX.get(si), trainY.get(si), cg, correct, ttags);
+        lm.BuildTaggingGraph(trainX.get(order.get(si)), trainY.get(order.get(si)), cg, correct, ttags);
         //cg.gradientCheck();
-        //++si;
+        ++si;
         loss += TensorUtils.toScalar(cg.forward());
         cg.backward();
-        sgd.update(1.0);
         //System.out.println(model.gradientCheck());
+        sgd.update(1.0);
         ++lines;
       }
       //sgd.status();

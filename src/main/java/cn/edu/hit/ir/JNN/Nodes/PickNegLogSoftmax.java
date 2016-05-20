@@ -56,7 +56,7 @@ public class PickNegLogSoftmax extends Node{
         for (int b = 0; b < vals.size(); ++b) {
           INDArray x = xs.get(0).getBatchMatrix(b).reshape(xs.get(0).d.batchSize(), 1);
           logz[b] = logSumExp(x);
-          fx.v.putScalar(b, logz[b] - x.getDouble(vals.get(0)));
+          fx.v.putScalar(b, logz[b] - x.getDouble(vals.get(b)));
         }
       }
     } else {

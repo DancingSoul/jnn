@@ -29,8 +29,9 @@ public class SumTest {
     Expression y = Expression.Creator.input(cg, Dim.create(2, 1), yV);
 
     Expression s = Expression.Creator.add(x, W);
-    Expression loss = Expression.Creator.squaredDistance(s, y);
-
+    Expression t = Expression.Creator.logistic(s);
+    Expression loss = Expression.Creator.squaredDistance(s, t);
+    Expression t2 = Expression.Creator.pickNegLogSoftmax(t, new Vector<Integer>(Arrays.asList(0)));
     cg.gradientCheck();
     cg.forward();
     cg.backward();

@@ -17,7 +17,7 @@ public class MomentumSGDTrainer extends AbstractTrainer{
   public Vector<ShadowLookupParameters> vlp;
 
   public MomentumSGDTrainer(Model m) {
-        this(m, 1E-6, 1E-2, 0.9);
+        this(m, 1E-5, 1E-2, 0.9);
     }
   public MomentumSGDTrainer(Model m, double lam, double e0, double mom) {
     super(m, lam, e0);

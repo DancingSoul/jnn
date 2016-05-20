@@ -94,7 +94,7 @@ public class MNIST {
     MLCBuilder mlc = new MLCBuilder(m);
 
 
-    SerializationUtils.loadModel("MNIST.obj", m);
+    //SerializationUtils.loadModel("MNIST.obj", m);
     Vector<Integer> label = new Vector<Integer>();
     label.setSize(xTrain.size());
     for (int i = 0; i < label.size(); i++) {

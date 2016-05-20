@@ -85,7 +85,7 @@ public class LSTMBuilder extends AbstractRNNBuilder{
     return (h.size() == 0 ? h0 : h.lastElement());
   }
   public Vector<Expression> finalS() {
-    Vector<Expression> ret = (c.size() == 0 ? c0 : c.lastElement());
+    Vector<Expression> ret = new Vector<Expression>(c.size() == 0 ? c0 : c.lastElement());
     for (Expression myH : finalH()) 
       ret.addElement(myH);
     return ret;
@@ -98,7 +98,7 @@ public class LSTMBuilder extends AbstractRNNBuilder{
     return (i == -1 ? h0 : h.get(i));
   }
   public Vector<Expression> getS(int i) {
-    Vector<Expression> ret = (i == -1 ? c0 : c.get(i));
+    Vector<Expression> ret = new Vector<Expression>(i == -1 ? c0 : c.get(i));
     for (Expression myH : getH(i))
       ret.addElement(myH);
     return ret;
@@ -155,19 +155,14 @@ public class LSTMBuilder extends AbstractRNNBuilder{
   }
   
   protected Expression addInputImpl(int prev, final Expression x) {
-    Vector<Expression> tmp = new Vector<Expression>(layers);
-    tmp.setSize(layers);
-    h.addElement(tmp);
-    tmp = new Vector<Expression>(layers);
-    tmp.setSize(layers);
-    c.addElement(tmp);
+    h.addElement(new Vector<Expression>(layers));
+    c.addElement(new Vector<Expression>(layers));
     Vector<Expression> ht = h.lastElement();
     Vector<Expression> ct = c.lastElement();
     Expression in = x;
     for (int i = 0; i < layers; ++i) {
       final Vector<Expression> vars = paramVars.get(i);
-      Expression iHTm1 = new Expression();
-      Expression iCTm1 = new Expression();
+      Expression iHTm1 = new Expression(), iCTm1 = new Expression();
       boolean hasPrevState = (prev >= 0 || hasInitialState);
       if (prev < 0) {
         if (hasInitialState) {
@@ -208,9 +203,9 @@ public class LSTMBuilder extends AbstractRNNBuilder{
       if (hasPrevState) {
         Expression iNwt = Expression.Creator.cwiseMultiply(iIt, iWt);
         Expression iCrt = Expression.Creator.cwiseMultiply(iFt, iCTm1);
-        ct.set(i, Expression.Creator.add(iCrt, iNwt));
+        ct.add(i, Expression.Creator.add(iCrt, iNwt));
       } else {
-        ct.set(i, Expression.Creator.cwiseMultiply(iIt, iWt));
+        ct.add(i, Expression.Creator.cwiseMultiply(iIt, iWt));
       }
       Expression iAot;
       if (hasPrevState) 
@@ -223,7 +218,7 @@ public class LSTMBuilder extends AbstractRNNBuilder{
       Expression iOt = Expression.Creator.logistic(iAot);
       Expression phT = Expression.Creator.tanh(ct.get(i));
       in = Expression.Creator.cwiseMultiply(iOt, phT);
-      ht.set(i, in);
+      ht.add(i, in);
     }
     if (Math.abs(dropoutRate) > 1E-10)
       return Expression.Creator.dropout(ht.lastElement(), dropoutRate);

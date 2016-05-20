@@ -22,6 +22,7 @@ public class Tensor implements Serializable {
 	public Tensor() {
 	  d = new Dim();
 	  v = Nd4j.zeros(1);
+		v.setOrder('f');
 	}
 
   public Tensor(final Dim d_) {
@@ -33,6 +34,7 @@ public class Tensor implements Serializable {
 	public Tensor(final Dim d_, final INDArray v_) {
 		d = new Dim(d_);
 		v = v_.dup().reshape(v_.length());
+		v.setOrder('f');
 	}
 	public Tensor(final Tensor t) {
 		d = new Dim(t.d);
