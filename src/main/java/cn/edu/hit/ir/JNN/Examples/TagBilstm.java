@@ -24,9 +24,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 class RNNLanguageModel {
   private final static double pdrop = 0.5;
   private final static int LAYERS = 1;
-  private final static int INPUT_DIM = 32;
-  private final static int HIDDEN_DIM = 32;
-  private final static int TAG_HIDDEN_DIM= 8;
+  private final static int INPUT_DIM = 128;
+  private final static int HIDDEN_DIM = 128;
+  private final static int TAG_HIDDEN_DIM= 32;
   private final static int TAG_DIM = 32;
   public static int TAG_SIZE = 0;
   public static int VOCAB_SIZE = 0;

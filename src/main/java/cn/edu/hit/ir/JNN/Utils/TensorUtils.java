@@ -7,6 +7,7 @@ import org.nd4j.linalg.api.rng.DefaultRandom;
 import org.nd4j.linalg.factory.Nd4j;
 
 import java.util.List;
+import java.util.Random;
 import java.util.Vector;
 
 public class TensorUtils {
@@ -33,7 +34,10 @@ public class TensorUtils {
     // TODO: optimize this, random generator should be obtained from a global
     // random number generator.
     DefaultRandom rand = RandomEngine.getInstance().rnd;
-    d.v = Nd4j.rand(d.v.shape(), -scale, scale, rand);
+    //Random rand = new Random(1024);
+    for (int i = 0; i < d.v.length(); i++)
+      d.v.putScalar(i, rand.nextDouble() * 2 - 1.0);
+    //d.v = Nd4j.rand(d.v.shape(), -scale, scale, rand);
     d.v.setOrder('f');
   }
 
