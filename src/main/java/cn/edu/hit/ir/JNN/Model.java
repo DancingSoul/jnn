@@ -98,7 +98,7 @@ public class Model implements Serializable {
     for (int i = 0; i < params.size(); i++) {
       for (int j = 0; j < params.get(i).g.v.length(); ++j) {
           System.out.println(params.get(i).g.v.getDouble(j) + "       " + params.get(i).gCheck.v.getDouble(j));
-          if (Math.abs(params.get(i).g.v.getDouble(j) - params.get(i).gCheck.v.getDouble(j)) > 1E-3) {
+          if (Math.abs(params.get(i).g.v.getDouble(j) - params.get(i).gCheck.v.getDouble(j)) > 1E-2) {
             return false;
         }
       }
@@ -108,7 +108,7 @@ public class Model implements Serializable {
         for (int k = 0; k < lookupParams.get(i).grads.get(j).v.length(); k++) {
           System.out.println("~" + lookupParams.get(i).grads.get(j).v.getDouble(k) + "       " + lookupParams.get(i).gradsCheck.get(j).v.getDouble(k));
           if (Math.abs(lookupParams.get(i).grads.get(j).v.getDouble(k) -
-                  lookupParams.get(i).gradsCheck.get(j).v.getDouble(k)) > 1E-3) {
+                  lookupParams.get(i).gradsCheck.get(j).v.getDouble(k)) > 1E-2) {
             //return false;
           }
         }

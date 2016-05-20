@@ -206,6 +206,7 @@ public class CTB51 {
     String testName = args[2];
     String embeddingName = args[3];
 
+    System.err.println("Reading embedding data from "  + embeddingName + "...") ;
     readEmbedding(embeddingName);
 
     Vector<Vector<String>> trainX = new Vector<Vector<String>>();
@@ -216,10 +217,12 @@ public class CTB51 {
 
     Vector<Vector<String>> devX = new Vector<Vector<String>>();
     Vector<Vector<String>> devY = new Vector<Vector<String>>();
+    System.err.println("Reading dev data from "  + devName + "...") ;
     readFile(devName, devX, devY);
 
     Vector<Vector<String>> testX = new Vector<Vector<String>>();
     Vector<Vector<String>> testY = new Vector<Vector<String>>();
+    System.err.println("Reading test data from "  + testName + "...") ;
     readFile(testName, testX, testY);
 
     int maxIteration = 1;

@@ -36,7 +36,7 @@ public class TensorUtils {
     DefaultRandom rand = RandomEngine.getInstance().rnd;
     //Random rand = new Random(1024);
     for (int i = 0; i < d.v.length(); i++)
-      d.v.putScalar(i, rand.nextDouble() * 2 - 1.0);
+      d.v.putScalar(i, (rand.nextDouble() * 2 - 1.0) * scale);
     //d.v = Nd4j.rand(d.v.shape(), -scale, scale, rand);
     d.v.setOrder('f');
   }
