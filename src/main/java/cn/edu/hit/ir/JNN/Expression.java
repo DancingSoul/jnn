@@ -70,7 +70,7 @@ public class Expression {
     }
 
     public static Expression tanh(final Expression x) {
-      return new Expression(x.pg, x.pg.addFunction(new Tanh(Arrays.asList(x.i))));
+      return new Expression(x.pg, x.pg.addFunction(new MyTanh(Arrays.asList(x.i))));
     }
 
     public static Expression logistic(final Expression x) {

@@ -175,6 +175,7 @@ public class CTB51 {
     }
   }
   public static void runOnDev(LSTMLanguageModel lm, Model model, Vector<Vector<String>> devX, Vector<Vector<String>> devY) {
+    long last = new Date().getTime();
     double dloss = 0.0;
     AtomicDouble dcorr = new AtomicDouble(0.0);
     AtomicDouble dtags = new AtomicDouble(0.0);
@@ -182,7 +183,7 @@ public class CTB51 {
     for (int i = 0; i < devX.size(); ++i) {
       ComputationGraph cg = new ComputationGraph();
       lm.BuildTaggingGraph(devX.get(i), devY.get(i), cg, dcorr, dtags, embeddings, tags, unk);
-      dloss += TensorUtils.toScalar(cg.forward());
+      dloss += TensorUtils.toScalar(cg.incrementalForward());
     }
     lm.setEval(false);
     if (dloss < best) {
@@ -191,7 +192,7 @@ public class CTB51 {
     }
     System.err.println("\n***DEV E = "
             + (dloss / dtags.doubleValue()) + " ppl = " + Math.exp(dloss / dtags.doubleValue())
-            + " acc = " + (dcorr.doubleValue() / dtags.doubleValue()));
+            + " acc = " + (dcorr.doubleValue() / dtags.doubleValue()) + " [consume = " + (new Date().getTime() - last) / 1000.0 + "s]");
   }
 
 
@@ -254,24 +255,26 @@ public class CTB51 {
     for (int i = 0; i < trainX.size(); i++)
       order.addElement(i);
 
+    long last = new Date().getTime();
     for (int iteration = 0; iteration < maxIteration; ++iteration) {
       double loss = 0.0f;
       AtomicDouble correct = new AtomicDouble(0.0);
       AtomicDouble ttags = new AtomicDouble(0.0);
-      Collections.shuffle(order);
+      //Collections.shuffle(order);
       for (int i = 0; i < trainX.size(); i++) {
         int index = order.get(i);
         ComputationGraph cg = new ComputationGraph();
         lm.BuildTaggingGraph(trainX.get(index), trainY.get(index), cg, correct, ttags, embeddings, tags, unk);
-        loss += TensorUtils.toScalar(cg.forward());
+        loss += TensorUtils.toScalar(cg.incrementalForward());
         cg.backward();
         sgd.update(1.0);
 
-        if (i % 1250 == 0) runOnDev(lm, model, devX, devY);
-        if (i % 50 == 0) {
+        if (i + iteration > 0 && i % 1250 == 0) runOnDev(lm, model, devX, devY);
+        if (i + iteration > 0 && i % 50 == 0) {
           System.err.println("E = " + (loss / ttags.doubleValue()) + " ppl = " + Math.exp(loss / ttags.doubleValue())
                   + " (acc = " + (correct.doubleValue() / ttags.doubleValue()) + ")" + " iterations : " + iteration
-                  + " lines : " + i);
+                  + " lines : " + i + "[consume = " + (new Date().getTime() - last) / 1000.0 + "s]");
+          last = new Date().getTime();
         }
         sgd.updateEpoch();
       }
@@ -284,9 +287,7 @@ public class CTB51 {
     for (int i = 0; i < testX.size(); i++) {
       ComputationGraph cg = new ComputationGraph();
       lm.BuildTaggingGraph(testX.get(i), testY.get(i), cg, correct, ttags, embeddings, tags, unk);
-      loss += TensorUtils.toScalar(cg.forward());
-      cg.backward();
-      sgd.update(1.0);
+      loss += TensorUtils.toScalar(cg.incrementalForward());
     }
     System.err.println("E = " + (loss / ttags.doubleValue()) + " ppl = " + Math.exp(loss / ttags.doubleValue())
             + " (acc = " + (correct.doubleValue() / ttags.doubleValue()) + ")");

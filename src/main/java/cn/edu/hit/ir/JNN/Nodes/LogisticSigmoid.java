@@ -6,6 +6,7 @@ import java.util.Vector;
 import cn.edu.hit.ir.JNN.Dim;
 import cn.edu.hit.ir.JNN.Tensor;
 import org.nd4j.linalg.api.ops.impl.transforms.Sigmoid;
+import org.nd4j.linalg.api.ops.impl.transforms.SigmoidDerivative;
 import org.nd4j.linalg.factory.Nd4j;
 
 /**
@@ -47,10 +48,11 @@ public class LogisticSigmoid extends Node {
   @Override
   public void backwardImpl(final Vector<Tensor> xs,
       final Tensor fx, final Tensor dEdf, int i_, Tensor dEdxi) {
-    for (int i = 0; i < fx.v.length(); ++i) {
-      double y = fx.v.getDouble(i);
-      dEdxi.v.putScalar(i, dEdf.v.getDouble(i) * y * (1 - y) + dEdxi.v.getDouble(i));
-    }
+    //for (int i = 0; i < fx.v.length(); ++i) {
+      // double y = fx.v.getDouble(i);
+      //dEdxi.v.putScalar(i, dEdf.v.getDouble(i) * y * (1 - y) + dEdxi.v.getDouble(i));
+    //}
+    Nd4j.getExecutioner().exec(new SigmoidDerivative(xs.get(0).v, dEdxi.v));
     //dEdxi.vec().addi(dEdf.v.muli(fx.v).muli(fx.v.rsub(1.)));
   }
 
