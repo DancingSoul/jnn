@@ -117,6 +117,7 @@ public class CTB51 {
   static HashMap <String, Vector<Double> > embeddings = new HashMap<String, Vector<Double>>();
   static HashMap <String, Integer> tags = new HashMap<String, Integer>();
   static HashMap <String, Integer> unk = new HashMap<String, Integer>();
+  static HashSet <String> all = new HashSet<String>();
   static double best;
 
 
@@ -134,10 +135,11 @@ public class CTB51 {
         for (int i = 0; i < item.length; ++i) {
           tx.addElement(item[i].split("_")[0]);
           ty.addElement(item[i].split("_")[1]);
-          if (embeddings.get(tx.lastElement()) == null) {
-            System.err.println(tx.lastElement() + " unfound in embedding table!");
-            unk.put(tx.lastElement(), unk.size());
-          }
+          //if (embeddings.get(tx.lastElement()) == null) {
+          //  System.err.println(tx.lastElement() + " unfound in embedding table!");
+          //  unk.put(tx.lastElement(), unk.size());
+          all.add(tx.lastElement());
+          //}
           if (tags.get(ty.lastElement()) == null) {
             tags.put(ty.lastElement(), tags.size());
           }
@@ -161,14 +163,16 @@ public class CTB51 {
       line = reader.readLine();
       int n = Integer.parseInt(line.split(" ")[0]);
       int dim = Integer.parseInt(line.split(" ")[1]) ;
-
+      int cnt = 0;
       while((line = reader.readLine()) != null){
+        cnt++;
         String word = line.split(" ")[0];
         Vector<Double> e = new Vector<Double>();
         e.setSize(dim);
         for (int i = 1; i <= dim; i++)
           e.set(i - 1, Double.parseDouble(line.split(" ")[i]));
-        embeddings.put(word, e);
+        if (all.contains(word) == true) embeddings.put(word, e);
+        if (cnt % 1000 == 0) System.err.println("cur : " + cnt + " n : " + n + "  " + cnt * 100.0 / n + "%");
       }
     } catch (Exception e) {
       e.printStackTrace();
@@ -195,6 +199,17 @@ public class CTB51 {
             + " acc = " + (dcorr.doubleValue() / dtags.doubleValue()) + " [consume = " + (new Date().getTime() - last) / 1000.0 + "s]");
   }
 
+  public static void getUnk(Vector<Vector<String>> X) {
+    for (int i = 0; i < X.size(); i++) {
+      for (int j = 0; j < X.get(i).size(); j++) {
+        if (embeddings.get(X.get(i).get(j)) == null) {
+          System.err.println(X.get(i).get(j) + " unfound in embedding table!");
+          unk.put(X.get(i).get(j), unk.size());
+        }
+      }
+    }
+
+  }
 
   public static void main(String args[]) {
     if (args.length != 4) {
@@ -207,8 +222,6 @@ public class CTB51 {
     String testName = args[2];
     String embeddingName = args[3];
 
-    System.err.println("Reading embedding data from "  + embeddingName + "...") ;
-    readEmbedding(embeddingName);
 
     Vector<Vector<String>> trainX = new Vector<Vector<String>>();
     Vector<Vector<String>> trainY = new Vector<Vector<String>>();
@@ -225,6 +238,15 @@ public class CTB51 {
     Vector<Vector<String>> testY = new Vector<Vector<String>>();
     System.err.println("Reading test data from "  + testName + "...") ;
     readFile(testName, testX, testY);
+
+    all.add("</s>");
+
+    System.err.println("Reading embedding data from "  + embeddingName + "...") ;
+    readEmbedding(embeddingName);
+
+    getUnk(trainX);
+    getUnk(devX);
+    getUnk(testX);
 
     int maxIteration = 1;
     int numInstances = trainX.size(); //Math.min(2000, trainX.size());
@@ -260,7 +282,7 @@ public class CTB51 {
       double loss = 0.0f;
       AtomicDouble correct = new AtomicDouble(0.0);
       AtomicDouble ttags = new AtomicDouble(0.0);
-      //Collections.shuffle(order);
+      Collections.shuffle(order);
       for (int i = 0; i < trainX.size(); i++) {
         int index = order.get(i);
         ComputationGraph cg = new ComputationGraph();
