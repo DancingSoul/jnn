@@ -77,12 +77,12 @@ public class MNIST {
   public static void main(String args[]) {
     Vector<Vector<Double>> xTrain = new Vector<Vector<Double>>();
     Vector<Vector<Double>> yTrain = new Vector<Vector<Double>>();
-    readFile("mnist_train.csv", xTrain, yTrain);
+    readFile("../data/mnist_train.csv", xTrain, yTrain);
     System.out.println("Done reading train with " + xTrain.size() + " instance(s).");
 
     Vector<Vector<Double>> xTest = new Vector<Vector<Double>>();
     Vector<Vector<Double>> yTest = new Vector<Vector<Double>>();
-    readFile("mnist_test.csv", xTest, yTest);
+    readFile("../data/mnist_test.csv", xTest, yTest);
     System.out.println("Done reading test with " + xTest.size() + " instance(s).");
 
     System.out.println("Done reading test.");

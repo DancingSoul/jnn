@@ -5,6 +5,7 @@ import cn.edu.hit.ir.JNN.LookupParameters;
 import cn.edu.hit.ir.JNN.Model;
 import cn.edu.hit.ir.JNN.Parameters;
 import org.nd4j.linalg.api.ndarray.INDArray;
+import org.nd4j.linalg.factory.Nd4j;
 
 public class SimpleSGDTrainer extends AbstractTrainer {
   SimpleSGDTrainer() {
@@ -33,7 +34,7 @@ public class SimpleSGDTrainer extends AbstractTrainer {
       INDArray reg = p.values.v.mul(lambda);
       p.g.v.muli(eta * scale * gscale);
       p.g.v.addi(reg);
-      p.values.v.subi(p.g.v);
+      p.values.vec().subi(p.g.vec());
       p.clear();
     }
     for (LookupParameters p : lookupParams) {

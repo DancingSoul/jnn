@@ -55,19 +55,26 @@ public class AffineTransform extends Node {
     } else {
       // Add, using broadcasting or not
       if (fx.d.bd > 1 && xs.get(0).d.bd == 1) {
-        fx.rowcolMatrix();
         for (int i = 0; i < fx.v.size(1); i++) {
-          fx.v.getColumn(i).assign(xs.get(0).v.transpose());
+          fx.rowcolMatrix().getColumn(i).assign(xs.get(0).vec().transpose());
         }
       } else {
-        for (int b = 0; b < fx.d.bd; ++b) {
-          fx.setBatchMatrix(b, xs.get(0).getBatchMatrix(b));
+        if (fx.d.bd == 1) {
+          fx.v.assign(xs.get(0).v);
+        } else {
+          for (int b = 0; b < fx.d.bd; ++b) {
+            fx.setBatchMatrix(b, xs.get(0).getBatchMatrix(b));
+          }
         }
       }
       //Multiply
       for (int i = 1; i < xs.size(); i += 2) {
         if (xs.get(i).d.bd == 1 && xs.get(i + 1).d.bd == fx.d.bd) {
-          fx.v.addi(xs.get(i).getBatchMatrix(0).mmul(xs.get(i + 1).colbatchMatrix()).reshape(fx.d.size(), 1));
+          if (xs.get(i + 1).d.bd == 1) {
+            fx.v.addi(xs.get(i).v.mmul(xs.get(i + 1).v));
+          } else {
+            fx.v.addi(xs.get(i).getBatchMatrix(0).mmul(xs.get(i + 1).colbatchMatrix()).reshape(fx.d.size(), 1));
+          }
         } else {
           assert(xs.get(i + 1).d.bd == 1 || xs.get(i + 1).d.bd == xs.get(i).d.bd);
           for (int b = 0; b < fx.d.bd; ++b) {
@@ -86,15 +93,27 @@ public class AffineTransform extends Node {
       dEdxi.v.addi(dEdf.v);
     } else if (i % 2 == 1){
       int maxB = Math.max(dEdf.d.bd, xs.get(i + 1).d.bd);
-      for (int b = 0; b < maxB; ++b)
-        dEdxi.getBatchMatrix(b).addi(dEdf.getBatchMatrix(b).mmul(xs.get(i + 1).getBatchMatrix(b).transpose()));
+      if (maxB == 1) {
+        dEdxi.v.addi(dEdf.v.mmul(xs.get(i + 1).v.transpose()));
+      } else {
+        for (int b = 0; b < maxB; ++b)
+          dEdxi.getBatchMatrix(b).addi(dEdf.getBatchMatrix(b).mmul(xs.get(i + 1).getBatchMatrix(b).transpose()));
+      }
     } else {
       int maxB = Math.max(xs.get(i - 1).d.bd, dEdf.d.bd);
       if (xs.get(i - 1).d.bd == 1 && dEdxi.d.bd == dEdf.d.bd) {
-        dEdxi.colbatchMatrix().addi(xs.get(i - 1).getBatchMatrix(0).transpose().mmul(dEdf.colbatchMatrix()));
+        if (dEdf.d.bd == 1) {
+          dEdxi.v.addi(xs.get(i - 1).v.transpose().mmul(dEdf.v));
+        } else {
+          dEdxi.colbatchMatrix().addi(xs.get(i - 1).getBatchMatrix(0).transpose().mmul(dEdf.colbatchMatrix()));
+        }
       } else {
-        for (int b = 0; b < maxB; ++b)
-          dEdxi.getBatchMatrix(b).addi(xs.get(i - 1).getBatchMatrix(b).transpose().mmul(dEdf.getBatchMatrix(b)));
+        if (maxB == 1) {
+          dEdxi.v = xs.get(i - 1).v.transpose().mmul(dEdf.v);
+        } else {
+          for (int b = 0; b < maxB; ++b)
+            dEdxi.getBatchMatrix(b).addi(xs.get(i - 1).getBatchMatrix(b).transpose().mmul(dEdf.getBatchMatrix(b)));
+        }
       }
     }
   }

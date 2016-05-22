@@ -204,7 +204,8 @@ public class CTB51 {
       for (int j = 0; j < X.get(i).size(); j++) {
         if (embeddings.get(X.get(i).get(j)) == null) {
           System.err.println(X.get(i).get(j) + " unfound in embedding table!");
-          unk.put(X.get(i).get(j), unk.size());
+          if (unk.get(X.get(i).get(j)) == null)
+            unk.put(X.get(i).get(j), unk.size());
         }
       }
     }
@@ -272,12 +273,13 @@ public class CTB51 {
     LSTMLanguageModel.TAG_SIZE = tags.size();
 
     LSTMLanguageModel lm = new LSTMLanguageModel(model);
-
+    //SerializationUtils.loadModel("CTB51.obj", model);
     Vector<Integer> order = new Vector<Integer>();
     for (int i = 0; i < trainX.size(); i++)
       order.addElement(i);
 
     long last = new Date().getTime();
+    long tot = last;
     for (int iteration = 0; iteration < maxIteration; ++iteration) {
       double loss = 0.0f;
       AtomicDouble correct = new AtomicDouble(0.0);
@@ -298,8 +300,10 @@ public class CTB51 {
                   + " lines : " + i + "[consume = " + (new Date().getTime() - last) / 1000.0 + "s]");
           last = new Date().getTime();
         }
-        sgd.updateEpoch();
       }
+      sgd.updateEpoch();
+      System.out.println("Iteration Time : " + (new Date().getTime() - tot) / 1000.0 + "s]");
+      tot = new Date().getTime();
     }
 
     double loss = 0.0;

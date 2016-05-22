@@ -109,7 +109,7 @@ public class Model implements Serializable {
           System.out.println("~" + lookupParams.get(i).grads.get(j).v.getDouble(k) + "       " + lookupParams.get(i).gradsCheck.get(j).v.getDouble(k));
           if (Math.abs(lookupParams.get(i).grads.get(j).v.getDouble(k) -
                   lookupParams.get(i).gradsCheck.get(j).v.getDouble(k)) > 1E-2) {
-            //return false;
+            return false;
           }
         }
       }

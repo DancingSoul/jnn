@@ -33,13 +33,14 @@ public class ComplexNN {
     Expression B3 = Expression.Creator.parameter(cg, m.addParameters(Dim.create(100)));
     Expression x = Expression.Creator.input(cg, Dim.create(2, 1), xV);
 
-    Expression A = Expression.Creator.logistic(Expression.Creator.multiply(W, x));
+    Expression A = Expression.Creator.logistic(Expression.Creator.affineTransform(Arrays.asList(B1, W, x)));
 
+    //Expression A = Expression.Creator.logistic(Expression.Creator.add(B1, Expression.Creator.multiply(W, x)));
     Expression A1 = Expression.Creator.tanh(Expression.Creator.affineTransform(Arrays.asList(B1, W2, A)));
     Expression A2 = Expression.Creator.logistic(Expression.Creator.affineTransform(Arrays.asList(B2, W3, A)));
     Expression A3 = Expression.Creator.tanh(Expression.Creator.affineTransform(Arrays.asList(B3, W4, A)));
 
-    Expression loss = Expression.Creator.pickNegLogSoftmax(A3, new Vector<Integer>(Arrays.asList(0)));
+    Expression loss = Expression.Creator.pickNegLogSoftmax(A, new Vector<Integer>(Arrays.asList(0)));
 
     cg.gradientCheck();
     cg.forward();
