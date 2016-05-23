@@ -28,8 +28,9 @@ public class SerializationUtils {
       ObjectInputStream oin = new ObjectInputStream(new FileInputStream(
               fileName));
       Model t = (Model)oin.readObject();
-      for (int i = 0; i < m.parametersList().size(); i++)
+      for (int i = 0; i < m.parametersList().size(); i++) {
         m.parametersList().get(i).copy(t.parametersList().get(i));
+      }
       for (int i = 0; i < m.lookupParametersList().size(); i++)
         m.lookupParametersList().get(i).copy(t.lookupParametersList().get(i));
       oin.close();

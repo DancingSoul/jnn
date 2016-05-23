@@ -15,21 +15,24 @@ import java.util.Vector;
 
 public class GradientCheckTest {
   public static void main(String args[]) {
-    INDArray x = Nd4j.zeros(2, 2).addi(1.0);
-    INDArray y = Nd4j.zeros(2, 3).addi(2.0);
-    x.putScalar(3, 5);
-    x.putScalar(0, 3);
-    System.err.println(x.ordering());
-    INDArray z = x.mmul(y);
-    System.err.println(z.ordering());
-    for (int i = 0; i < z.length(); ++i)
-      System.err.println(z.getDouble(i));
-    INDArray t = z.mul(1.0);
-    System.err.println(t.ordering());
-    for (int i = 0; i < t.length(); ++i)
-      System.err.println(t.getDouble(i));
-    z.addi(t);
-    for (int i = 0; i < z.length(); ++i)
-      System.err.println(z.getDouble(i));
+
+    Model m = new Model();
+    SimpleSGDTrainer sgd = new SimpleSGDTrainer(m);
+    ComputationGraph cg = new ComputationGraph();
+
+    AtomicDouble xValues = new AtomicDouble(1.0);
+    AtomicDouble yValues = new AtomicDouble(1.0);
+
+    Expression x = Expression.Creator.input(cg, xValues);
+    Expression y = Expression.Creator.input(cg, xValues);
+
+    Expression a = Expression.Creator.parameter(cg, m.addParameters(Dim.create(1, 1)));
+    Expression b = Expression.Creator.multiply(a, x);
+
+    Expression loss = Expression.Creator.squaredDistance(b, y);
+    cg.gradientCheck();
+    cg.forward();
+    cg.backward();
+    System.out.println(m.gradientCheck());
   }
 }

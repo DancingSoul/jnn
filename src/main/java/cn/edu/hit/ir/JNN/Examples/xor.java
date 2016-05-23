@@ -28,7 +28,7 @@ public class xor {
     Expression V = Expression.Creator.parameter(cg, m.addParameters(Dim.create(1, HIDDEN_SIZE)));
     Expression a = Expression.Creator.parameter(cg, m.addParameters(Dim.create(1)));
 
-    //SerializationUtils.loadModel("xor.obj", m);
+    SerializationUtils.loadModel("xor.obj", m);
 
     Vector<Double> xValues = new Vector<Double>(2);
     

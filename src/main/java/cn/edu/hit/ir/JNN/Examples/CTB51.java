@@ -20,7 +20,7 @@ class LSTMLanguageModel {
   private final static double pdrop = 0.5;
   private final static int LAYERS = 1;
   public static int INPUT_DIM = 0;
-  private final static int HIDDEN_DIM = 128;
+  private final static int HIDDEN_DIM = 100;
   private final static int TAG_HIDDEN_DIM= 32;
   public static int TAG_SIZE = 0;
   public static int UNKNOWN_SIZE = 0;

@@ -26,10 +26,10 @@ public class Tensor implements Serializable {
 
 	public Tensor(final Dim d_) {
 		d = new Dim(d_);
-		v = Nd4j.zeros(d.size());
-		v.setOrder('f');
-		v = v.reshape(d.at(0), d.at(1) * d.bd);
-		//v = Nd4j.zeros(d.at(0), d.at(1) * d.bd);
+		//v = Nd4j.zeros(d.size());
+		//v.setOrder('f');
+		//v = v.reshape(d.at(0), d.at(1) * d.bd);
+		v = Nd4j.zeros(d.at(0), d.at(1) * d.bd);
 	}
 
 	public Tensor(final Dim d_, final INDArray v_) {

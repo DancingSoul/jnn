@@ -22,8 +22,9 @@ public class TensorUtils {
   }
 
   public static void zero(Tensor d) {
-    //d.v = Nd4j.zeros(d.v.shape());
-    constant(d, 0d); //I think assign is better than create new class.
+    d.v = Nd4j.zeros(d.v.shape());
+    //d.v.setOrder('f');
+    //constant(d, 0d); //I think assign is better than create new class.
   }
 
   public static void randomize(Tensor d) {
@@ -34,11 +35,9 @@ public class TensorUtils {
     // TODO: optimize this, random generator should be obtained from a global
     // random number generator.
     DefaultRandom rand = RandomEngine.getInstance().rnd;
-    //Random rand = new Random(1024);
     for (int i = 0; i < d.v.length(); i++)
       d.v.putScalar(i, (rand.nextDouble() * 2 - 1.0) * scale);
-    //d.v = Nd4j.rand(d.v.shape(), -scale, scale, rand);
-    d.v.setOrder('f');
+
   }
 
   public static void randomBernoulli(Tensor d, double p, double scale) {
@@ -91,5 +90,4 @@ public class TensorUtils {
     }
     return res;
   }
-  
 }

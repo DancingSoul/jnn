@@ -94,7 +94,7 @@ public class MNIST {
     MLCBuilder mlc = new MLCBuilder(m);
 
 
-    //SerializationUtils.loadModel("MNIST.obj", m);
+    SerializationUtils.loadModel("MNIST.obj", m);
     Vector<Integer> label = new Vector<Integer>();
     label.setSize(xTrain.size());
     for (int i = 0; i < label.size(); i++) {
@@ -103,7 +103,7 @@ public class MNIST {
 
 
     System.err.println(label.size());
-    int maxIteration = 1;
+    int maxIteration = 0;
     int numInstances = Math.min(2000, label.size());
     if (args.length >= 1) {
       maxIteration = Integer.parseInt(args[0]);
@@ -155,7 +155,7 @@ public class MNIST {
       //System.out.println(mx + " " + p1 + " : " + p2);
     }
     System.err.println(cnt + " / " + xTest.size());
-    SerializationUtils.save("MNIST.obj", m);
+   // SerializationUtils.save("MNIST.obj", m);
 
   }
 }
