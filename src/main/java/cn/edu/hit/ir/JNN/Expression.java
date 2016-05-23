@@ -116,6 +116,12 @@ public class Expression {
               new Sum(getIndices(xs))));
     }
 
+    public static Expression concatenate(final List<Expression> xs) {
+      assert(xs.size() != 0);
+      return new Expression(xs.get(0).pg, xs.get(0).pg.addFunction(
+              new Concatenate(getIndices(xs))));
+    }
+
     public static Vector <Integer> getIndices(List <Expression> xs) {
       Vector <Integer> res = new Vector<Integer>(xs.size());
       for (int i = 0; i < xs.size(); ++i) {
@@ -123,5 +129,6 @@ public class Expression {
       }
       return res;
     }
+
   }
 }

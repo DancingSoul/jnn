@@ -37,7 +37,6 @@ public class TensorUtils {
     DefaultRandom rand = RandomEngine.getInstance().rnd;
     for (int i = 0; i < d.v.length(); i++)
       d.v.putScalar(i, (rand.nextDouble() * 2 - 1.0) * scale);
-
   }
 
   public static void randomBernoulli(Tensor d, double p, double scale) {

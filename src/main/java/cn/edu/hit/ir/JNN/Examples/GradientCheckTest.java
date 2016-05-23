@@ -15,7 +15,6 @@ import java.util.Vector;
 
 public class GradientCheckTest {
   public static void main(String args[]) {
-
     Model m = new Model();
     SimpleSGDTrainer sgd = new SimpleSGDTrainer(m);
     ComputationGraph cg = new ComputationGraph();
