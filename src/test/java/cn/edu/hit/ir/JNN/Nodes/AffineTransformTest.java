@@ -30,7 +30,8 @@ public class AffineTransformTest {
     Expression y = Expression.Creator.input(cg, Dim.create(2, 1), yV);
 
     Expression AT = Expression.Creator.affineTransform(Arrays.asList(x1, W, x2, W2, W3));
-    Expression loss = Expression.Creator.squaredDistance(AT, y);
+    Expression t = Expression.Creator.rectify(AT);
+    Expression loss = Expression.Creator.squaredDistance(t, y);
 
 
 

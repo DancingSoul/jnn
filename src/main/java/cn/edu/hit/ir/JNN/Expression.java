@@ -108,7 +108,10 @@ public class Expression {
       return new Expression(x.pg, x.pg.addFunction(
               new PickNegLogSoftmax(Arrays.asList(x.i), vals)));
     }
-
+    public static Expression rectify(final Expression x) {
+      return new Expression(x.pg, x.pg.addFunction(
+              new Rectify(Arrays.asList(x.i))));
+    }
 
     public static Expression sum(final List<Expression> xs) {
       assert(xs.size() != 0);

@@ -27,23 +27,39 @@ class LSTMLanguageModel {
   private static boolean eval = false;
 
   private LookupParameters pW;
+  private LookupParameters pT;
   private Parameters pL2th;
   private Parameters pR2th;
+  private Parameters pPreth;
   private Parameters pThbias;
   private Parameters pTh2t;
   private Parameters pTbias;
+  private Parameters pW1;
+  private Parameters pW2;
+  private Parameters pB1;
+  private Parameters pSOS;
   private LSTMBuilder l2rbuilder;
   private LSTMBuilder r2lbuilder;
+
   LSTMLanguageModel(Model model) {
-    l2rbuilder = new LSTMBuilder(LAYERS, INPUT_DIM * 2, HIDDEN_DIM, model);
-    r2lbuilder = new LSTMBuilder(LAYERS, INPUT_DIM * 2, HIDDEN_DIM, model);
+    l2rbuilder = new LSTMBuilder(LAYERS, INPUT_DIM , HIDDEN_DIM, model);
+    r2lbuilder = new LSTMBuilder(LAYERS, INPUT_DIM, HIDDEN_DIM, model);
     pW = model.addLookupParameters(ALL_SIZE, Dim.create(INPUT_DIM));
+    pT = model.addLookupParameters(TAG_SIZE, Dim.create(TAG_HIDDEN_DIM));
     pL2th = model.addParameters(Dim.create(TAG_HIDDEN_DIM, HIDDEN_DIM));
     pR2th = model.addParameters(Dim.create(TAG_HIDDEN_DIM, HIDDEN_DIM));
     pThbias = model.addParameters(Dim.create(TAG_HIDDEN_DIM));
 
     pTh2t = model.addParameters(Dim.create(TAG_SIZE, TAG_HIDDEN_DIM));
     pTbias = model.addParameters(Dim.create(TAG_SIZE));
+
+    pW1 = model.addParameters(Dim.create(INPUT_DIM , INPUT_DIM));
+    pW2 = model.addParameters(Dim.create(INPUT_DIM , INPUT_DIM));
+    pB1 = model.addParameters(Dim.create(INPUT_DIM));
+
+    pPreth = model.addParameters(Dim.create(TAG_HIDDEN_DIM, TAG_HIDDEN_DIM));
+
+    pSOS = model.addParameters(Dim.create(TAG_HIDDEN_DIM));
   }
   // return Expression of total loss
   Expression BuildTaggingGraph(final Vector<String> sw, final Vector<String> st, ComputationGraph cg,
@@ -56,9 +72,14 @@ class LSTMLanguageModel {
     r2lbuilder.startNewSequence();
     Expression iL2th = Expression.Creator.parameter(cg, pL2th);
     Expression iR2th = Expression.Creator.parameter(cg, pR2th);
+    Expression iPreth = Expression.Creator.parameter(cg, pPreth);
     Expression iThbias = Expression.Creator.parameter(cg, pThbias);
     Expression iTh2t = Expression.Creator.parameter(cg, pTh2t);
     Expression iTbias = Expression.Creator.parameter(cg, pTbias);
+    Expression iW1 = Expression.Creator.parameter(cg, pW1);
+    Expression iW2 = Expression.Creator.parameter(cg, pW2);
+    Expression iB1 = Expression.Creator.parameter(cg, pB1);
+
     Vector<Expression> errs = new Vector<Expression>();
     Vector<Expression> iWords = new Vector<Expression>();
     Vector<Expression> fwds = new Vector<Expression>();
@@ -74,34 +95,36 @@ class LSTMLanguageModel {
       tmp.addElement(0.0);
     Expression unkWord = Expression.Creator.input(cg, Dim.create(INPUT_DIM), tmp);
 
-
-    l2rbuilder.addInput(Expression.Creator.concatenate(Arrays.asList(
-            unkWord, Expression.Creator.lookup(cg, pW, new Vector<Integer>(Arrays.asList(all.get("<s>")))))));
+    l2rbuilder.addInput(Expression.Creator.rectify(Expression.Creator.affineTransform(Arrays.asList(
+            iB1, iW1, unkWord, iW2,
+            Expression.Creator.lookup(cg, pW, new Vector<Integer>(Arrays.asList(all.get("<s>"))))))));
 
     for (int t = 0; t < slen; ++t) {
       Vector<Double> in = embeddings.get(sw.get(t));
-      if (in != null) iWords.set(t, Expression.Creator.concatenate(Arrays.asList(
-              Expression.Creator.input(cg, Dim.create(INPUT_DIM), in),
-              Expression.Creator.lookup(cg, pW, new Vector<Integer>(Arrays.asList(all.get(sw.get(t))))))));
+      if (in != null) iWords.set(t, Expression.Creator.rectify(Expression.Creator.affineTransform(Arrays.asList(
+              iB1, iW1, Expression.Creator.input(cg, Dim.create(INPUT_DIM), in), iW2,
+              Expression.Creator.lookup(cg, pW, new Vector<Integer>(Arrays.asList(all.get(sw.get(t)))))))));
       else {
-        iWords.set(t, Expression.Creator.concatenate(Arrays.asList(
-                unkWord, Expression.Creator.lookup(cg, pW, new Vector<Integer>(Arrays.asList(all.get(sw.get(t))))))));
-        if (!eval) { iWords.set(t, Expression.Creator.noise(iWords.get(t), 0.1)); }
+        iWords.set(t, Expression.Creator.rectify(Expression.Creator.affineTransform(Arrays.asList(
+                iB1, iW1, unkWord, iW2,
+                Expression.Creator.lookup(cg, pW, new Vector<Integer>(Arrays.asList(all.get(sw.get(t)))))))));
+        //if (!eval) { iWords.set(t, Expression.Creator.noise(iWords.get(t), 0.1)); }
       }
       fwds.set(t, l2rbuilder.addInput(iWords.get(t)));
     }
 
     //read sequence from right to left
-    r2lbuilder.addInput(Expression.Creator.concatenate(Arrays.asList(
-            Expression.Creator.input(cg, Dim.create(INPUT_DIM), embeddings.get("</s>")),
-            Expression.Creator.lookup(cg, pW, new Vector<Integer>(Arrays.asList(all.get("<s>")))))));
+    r2lbuilder.addInput(Expression.Creator.rectify(Expression.Creator.affineTransform(Arrays.asList(
+            iB1, iW1, Expression.Creator.input(cg, Dim.create(INPUT_DIM), embeddings.get("</s>")), iW2,
+            Expression.Creator.lookup(cg, pW, new Vector<Integer>(Arrays.asList(all.get("</s>"))))))));
     for (int  t = 0; t < slen; ++t)
       revs.set(slen - t - 1, r2lbuilder.addInput(iWords.get(slen - t - 1)));
 
+    Expression preTag = Expression.Creator.parameter(cg, pSOS);
     for (int t = 0; t < slen; ++t) {
       nTagged.add(1.0);
       Expression iTh = Expression.Creator.tanh(Expression.Creator.affineTransform(
-              new Vector<Expression>(Arrays.asList(iThbias, iL2th, fwds.get(t), iR2th, revs.get(t)))));
+              new Vector<Expression>(Arrays.asList(iThbias, iL2th, fwds.get(t), iR2th, revs.get(t), iPreth, preTag))));
       //if (!eval) { iTh = Expression.Creator.dropout(iTh, pDrop); }
       Expression iT = Expression.Creator.affineTransform(new Vector<Expression>(Arrays.asList(iTbias, iTh2t, iTh)));
       Vector<Double> dist = TensorUtils.toVector(cg.incrementalForward());
@@ -113,6 +136,7 @@ class LSTMLanguageModel {
           besti = i;
         }
       }
+      preTag = Expression.Creator.lookup(cg, pT, new Vector<Integer>(Arrays.asList(besti)));
       if (tags.get(st.get(t)) == besti) cor.add(1.0);
       Expression iErr = Expression.Creator.pickNegLogSoftmax(iT, new Vector<Integer>(Arrays.asList(tags.get(st.get(t)))));
       errs.addElement(iErr);
@@ -245,7 +269,7 @@ public class CTB51 {
     System.err.println("Reading embedding data from "  + embeddingName + "...") ;
     readEmbedding(embeddingName);
 
-    int maxIteration = 1;
+    int maxIteration = 10;
     int numInstances = trainX.size(); //Math.min(2000, trainX.size());
     if (args.length >= 5) {
       maxIteration = Integer.parseInt(args[4]);
