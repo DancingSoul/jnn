@@ -40,7 +40,7 @@ public abstract class Node {
     if (this.supportsMultibatch() || fx.d.getNumBatchElements() == 1) {
       forwardImpl(xs, fx);
     } else {
-      //...  
+      //TODO
     }
   }
 
@@ -48,7 +48,7 @@ public abstract class Node {
     if (this.supportsMultibatch() || fx.d.getNumBatchElements() == 1) {
       backwardImpl(xs, fx, dEdf, i, dEdxi);
     } else {
-      //...
+      //TODO
     }
   }
 

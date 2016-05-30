@@ -98,12 +98,10 @@ public class Expression {
       return new Expression(xs.get(0).pg, xs.get(0).pg.addFunction(
           new AffineTransform(getIndices(xs))));
     }
-
     public static Expression noise(final Expression x, double stddev) {
       return new Expression(x.pg, x.pg.addFunction(
               new GaussianNoise(Arrays.asList(x.i), stddev)));
     }
-
     public static Expression pickNegLogSoftmax(final Expression x, Vector<Integer> vals) {
       return new Expression(x.pg, x.pg.addFunction(
               new PickNegLogSoftmax(Arrays.asList(x.i), vals)));
@@ -112,19 +110,16 @@ public class Expression {
       return new Expression(x.pg, x.pg.addFunction(
               new Rectify(Arrays.asList(x.i))));
     }
-
     public static Expression sum(final List<Expression> xs) {
       assert(xs.size() != 0);
       return new Expression(xs.get(0).pg, xs.get(0).pg.addFunction(
               new Sum(getIndices(xs))));
     }
-
     public static Expression concatenate(final List<Expression> xs) {
       assert(xs.size() != 0);
       return new Expression(xs.get(0).pg, xs.get(0).pg.addFunction(
               new Concatenate(getIndices(xs))));
     }
-
     public static Vector <Integer> getIndices(List <Expression> xs) {
       Vector <Integer> res = new Vector<Integer>(xs.size());
       for (int i = 0; i < xs.size(); ++i) {
@@ -132,6 +127,5 @@ public class Expression {
       }
       return res;
     }
-
   }
 }

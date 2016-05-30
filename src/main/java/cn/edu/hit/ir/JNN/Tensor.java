@@ -83,6 +83,4 @@ public class Tensor implements Serializable {
 		}
 		return true;
 	}
-
-
 }

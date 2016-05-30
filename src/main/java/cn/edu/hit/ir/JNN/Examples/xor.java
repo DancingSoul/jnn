@@ -21,8 +21,6 @@ public class xor {
     SimpleSGDTrainer sgd = new SimpleSGDTrainer(m);
     ComputationGraph cg = new ComputationGraph();
 
-
-
     Expression W = Expression.Creator.parameter(cg, m.addParameters(Dim.create(HIDDEN_SIZE, 2)));
     Expression b = Expression.Creator.parameter(cg, m.addParameters(Dim.create(HIDDEN_SIZE)));
     Expression V = Expression.Creator.parameter(cg, m.addParameters(Dim.create(1, HIDDEN_SIZE)));
@@ -62,6 +60,6 @@ public class xor {
       lossIter /= 4.0;
       System.out.println("E = " + lossIter);
     }
-    //SerializationUtils.save("xor.obj", m);
+    SerializationUtils.save("xor.obj", m);
   }
 }

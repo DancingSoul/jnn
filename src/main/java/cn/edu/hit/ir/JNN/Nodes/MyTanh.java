@@ -37,9 +37,6 @@ public class MyTanh extends Node {
 
   @Override
   public void forwardImpl(final Vector<Tensor> xs, Tensor fx) {
-    //for (int i = 0; i < fx.v.length(); ++i) {
-    //  fx.v.putScalar(i, Math.tanh(xs.get(0).v.getDouble(i)));
-    //}
     Nd4j.getExecutioner().exec(new Tanh(xs.get(0).v, fx.v));
   }
 

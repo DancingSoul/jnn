@@ -21,11 +21,9 @@ public class TensorUtils {
     //d.v.assign(c);
     d.v = Nd4j.zeros(d.v.shape()).addi(c);
   }
-
   public static void zero(Tensor d) {
     d.v = Nd4j.zeros(d.v.shape());
-    //d.v.setOrder('f');
-    //constant(d, 0d); //I think assign is better than create new class.
+    //constant(d, 0d);
   }
 
   public static void randomize(Tensor d) {
@@ -36,11 +34,9 @@ public class TensorUtils {
     // TODO: optimize this, random generator should be obtained from a global
     // random number generator.
     DefaultRandom rand = RandomEngine.getInstance().rnd;
-    //Random rand = new Random(1024);
     for (int i = 0; i < d.v.length(); i++)
       d.v.putScalar(i, (rand.nextDouble() * 2 - 1.0) * scale);
     //d.v = Nd4j.rand(d.v.shape(), -scale, scale, rand);
-    //d.v.setOrder('f');
   }
 
   public static void randomBernoulli(Tensor d, double p, double scale) {
@@ -63,9 +59,8 @@ public class TensorUtils {
 
   public static double accessElement(Tensor d, Dim index) {
     // return v[index[0], index[1]];
-    // return d.v.getDouble(index.at(0) * index.at(1) + index.at(1));
     //TODO
-    return 0.0;
+    return d.v.getDouble(index.at(0), index.at(1));
   }
 
   public static void setElement(Tensor v, int index, double value) {
@@ -79,7 +74,7 @@ public class TensorUtils {
   }
 
   public static void copyElements(final Tensor tgt, final Tensor src) {
-    tgt.v.assign(src.v);
+    tgt.v = src.v.dup();
   }
   
   public static double toScalar(Tensor t) {

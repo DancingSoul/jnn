@@ -42,8 +42,8 @@ class LSTMLanguageModel {
   private LSTMBuilder r2lbuilder;
 
   LSTMLanguageModel(Model model) {
-    l2rbuilder = new LSTMBuilder(LAYERS, INPUT_DIM , HIDDEN_DIM, model);
-    r2lbuilder = new LSTMBuilder(LAYERS, INPUT_DIM, HIDDEN_DIM, model);
+    l2rbuilder = new LSTMBuilder(LAYERS, INPUT_DIM * 2 , HIDDEN_DIM, model);
+    r2lbuilder = new LSTMBuilder(LAYERS, INPUT_DIM * 2, HIDDEN_DIM, model);
     pW = model.addLookupParameters(ALL_SIZE, Dim.create(INPUT_DIM));
     pT = model.addLookupParameters(TAG_SIZE, Dim.create(TAG_HIDDEN_DIM));
     pL2th = model.addParameters(Dim.create(TAG_HIDDEN_DIM, HIDDEN_DIM));
@@ -53,9 +53,9 @@ class LSTMLanguageModel {
     pTh2t = model.addParameters(Dim.create(TAG_SIZE, TAG_HIDDEN_DIM));
     pTbias = model.addParameters(Dim.create(TAG_SIZE));
 
-    pW1 = model.addParameters(Dim.create(INPUT_DIM , INPUT_DIM));
-    pW2 = model.addParameters(Dim.create(INPUT_DIM , INPUT_DIM));
-    pB1 = model.addParameters(Dim.create(INPUT_DIM));
+    pW1 = model.addParameters(Dim.create(INPUT_DIM * 2 , INPUT_DIM));
+    pW2 = model.addParameters(Dim.create(INPUT_DIM * 2 , INPUT_DIM));
+    pB1 = model.addParameters(Dim.create(INPUT_DIM * 2));
 
     pPreth = model.addParameters(Dim.create(TAG_HIDDEN_DIM, TAG_HIDDEN_DIM));
 
@@ -123,7 +123,7 @@ class LSTMLanguageModel {
     Expression preTag = Expression.Creator.parameter(cg, pSOS);
     for (int t = 0; t < slen; ++t) {
       nTagged.add(1.0);
-      Expression iTh = Expression.Creator.tanh(Expression.Creator.affineTransform(
+      Expression iTh = Expression.Creator.rectify(Expression.Creator.affineTransform(
               new Vector<Expression>(Arrays.asList(iThbias, iL2th, fwds.get(t), iR2th, revs.get(t), iPreth, preTag))));
       //if (!eval) { iTh = Expression.Creator.dropout(iTh, pDrop); }
       Expression iT = Expression.Creator.affineTransform(new Vector<Expression>(Arrays.asList(iTbias, iTh2t, iTh)));
@@ -156,7 +156,23 @@ public class CTB51 {
   static HashMap <String, Integer> all = new HashMap<String, Integer>();
   static double best;
 
-
+  public static String transform(String str) {
+    String res = "";
+    int flag = 0;
+    for (int i = 0; i < str.length(); i++) {
+      if (str.charAt(i) >= '0' && str.charAt(i) <= '9' || (flag == 1 && str.charAt(i) == '.')) {
+        flag = 1;
+      } else {
+        if (flag == 1){
+          res += "##";
+          flag = 0;
+        }
+        res += str.charAt(i);
+      }
+    }
+    if (flag == 1) res += "##";
+    return res;
+  }
   public static void readFile(String fileName, Vector<Vector<String>> x, Vector<Vector<String>> y) {
     int lc = 0;
     int toks = 0;
@@ -172,8 +188,10 @@ public class CTB51 {
           tx.addElement(item[i].split("_")[0]);
           ty.addElement(item[i].split("_")[1]);
 
-          if (all.get(tx.lastElement()) == null) {
-            all.put(tx.lastElement(), all.size());
+          String word = transform(tx.lastElement());
+          tx.set(tx.size() - 1, word);
+          if (all.get(word) == null) {
+            all.put(word, all.size());
           }
 
           if (tags.get(ty.lastElement()) == null) {
@@ -202,12 +220,12 @@ public class CTB51 {
       int cnt = 0;
       while((line = reader.readLine()) != null){
         cnt++;
-        String word = line.split(" ")[0];
+        String word = transform(line.split(" ")[0]);
         Vector<Double> e = new Vector<Double>();
         e.setSize(dim);
         for (int i = 1; i <= dim; i++)
           e.set(i - 1, Double.parseDouble(line.split(" ")[i]));
-        if (all.get(word) != null) embeddings.put(word, e);
+        if (all.get(word) != null && embeddings.get(word) == null) embeddings.put(word, e);
         if (cnt % 1000 == 0) System.err.println("cur : " + cnt + " n : " + n + "  " + cnt * 100.0 / n + "%");
       }
     } catch (Exception e) {

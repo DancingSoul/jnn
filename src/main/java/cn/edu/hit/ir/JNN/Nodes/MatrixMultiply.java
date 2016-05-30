@@ -45,10 +45,10 @@ public class MatrixMultiply extends Node {
     assert (xs.size() == 2);
     assert (fx.d.bd == Math.max(xs.get(0).d.bd, xs.get(1).d.bd));
     if (xs.get(0).d.bd == 1) {
-      fx.v = xs.get(0).getBatchMatrix(0).mmul(xs.get(1).colbatchMatrix());
-      //fx.v = xs.get(0).vec().mmul(xs.get(1).vec());
+      fx.v = xs.get(0).v.mmul(xs.get(1).v);
     } else {
-      //...
+      for (int b = 0; b < xs.get(0).d.bd; ++b)
+        fx.setBatchMatrix(b, xs.get(0).getBatchMatrix(b).mmul(xs.get(1).getBatchMatrix(b)));
     }
   }
 
