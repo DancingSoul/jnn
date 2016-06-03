@@ -11,6 +11,7 @@ import cn.edu.hit.ir.JNN.Utils.TensorUtils;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by dancingsoul on 2016/5/29.
@@ -79,7 +80,8 @@ class LSTMLanguageModelForMultiTask {
   }
   // return Expression of total loss
   Expression BuildTaggingGraph(final Vector<Integer> sw, final Vector<Integer> st, ComputationGraph cg,
-                               AtomicDouble cor, AtomicDouble nTagged, HashMap<Integer, Vector<Double>> embeddings, int type) {
+                               AtomicDouble cor, AtomicDouble nTagged, HashMap<Integer, Vector<Double>> embeddings,
+                               int type, Vector<Integer> pt) {
     final int slen = sw.size();
     l2rbuilder.newGraph(cg);
     l2rbuilder.startNewSequence();
@@ -149,6 +151,7 @@ class LSTMLanguageModelForMultiTask {
         }
       }
 
+      if (pt != null) pt.addElement(besti);
       //System.out.println(t + "  " + st.get(t) + " " + dist.size());
       if (st.get(t) == besti) cor.add(1.0);
       Expression iErr = Expression.Creator.pickNegLogSoftmax(iT, new Vector<Integer>(Arrays.asList(st.get(t))));
@@ -168,7 +171,9 @@ public class MultiTask {
   private static HashMap <String, Integer> posTags = new HashMap<String, Integer>();
   private static HashMap <String, Integer> nerTags = new HashMap<String, Integer>();
   private static HashMap <String, Integer> allWords = new HashMap<String, Integer>();
+  private static Vector<String> intToTag = new Vector<String>();
   private static double best;
+  private static double bestF;
 
   public static void readPosFile(String fileName, Vector<Vector<Integer>> x, Vector<Vector<Integer>> y) {
     int lc = 0;
@@ -229,6 +234,7 @@ public class MultiTask {
           }
           if (nerTags.get(item[3]) == null) {
             nerTags.put(item[3], nerTags.size());
+            intToTag.addElement(item[3]);
           }
           tx.addElement(allWords.get(item[0]));
           ty.addElement(nerTags.get(item[3]));
@@ -269,28 +275,89 @@ public class MultiTask {
     }
   }
 
+
+  public static void calculateNer(Vector<Integer> X, Vector<Integer> Y, AtomicDouble TP, AtomicDouble FP, AtomicDouble FN) {
+    HashSet <Integer> seg = new HashSet<Integer>();
+    for (int i = 0; i < X.size(); i++) {
+      String cur = intToTag.get(X.get(i));
+      if (cur.charAt(0) == 'B') {
+        int j = i + 1;
+        while (j < X.size()) {
+          String str = intToTag.get(X.get(j));
+          if (!(str.charAt(0) == 'I' && cur.substring(1) == str.substring(1)))
+            break;
+          j++;
+        }
+        seg.add(100000000 * X.get(i) + 10000 * i + j - 1);
+        i = j - 1;
+      }
+    }
+
+    double tp = 0.0;
+    double fp = 0.0;
+    double fn = 0.0;
+
+    for (int i = 0; i < Y.size(); i++) {
+      String cur = intToTag.get(Y.get(i));
+      if (cur.charAt(0) == 'B') {
+        int j = i + 1;
+        while (j < Y.size()) {
+          String str = intToTag.get(Y.get(j));
+          if (!(str.charAt(0) == 'I' && cur.substring(1) == str.substring(1)))
+            break;
+          j++;
+        }
+        if (seg.contains(100000000 * Y.get(i) + i * 10000 + j - 1)) tp++;
+        else fp++;
+        i = j - 1;
+      }
+    }
+    fn = seg.size() - tp;
+    TP.add(tp);
+    FP.add(fp);
+    FN.add(fn);
+  }
+
   public static void runOnDev(LSTMLanguageModelForMultiTask lm, Model model, Vector<Vector<Integer>> devX,
                               Vector<Vector<Integer>> devY, int type){
     long last = new Date().getTime();
     double dloss = 0.0;
     AtomicDouble dcorr = new AtomicDouble(0.0);
     AtomicDouble dtags = new AtomicDouble(0.0);
+    AtomicDouble TP = new AtomicDouble(0.0);
+    AtomicDouble FP = new AtomicDouble(0.0);
+    AtomicDouble FN = new AtomicDouble(0.0);
+    double P = 0.0;
+    double R = 0.0;
+    double F = 0.0;
     lm.setEval(true);
     for (int i = 0; i < devX.size(); ++i) {
       ComputationGraph cg = new ComputationGraph();
-      lm.BuildTaggingGraph(devX.get(i), devY.get(i), cg, dcorr, dtags, embeddings, type);
+      Vector <Integer> pt = new Vector<Integer>();
+      lm.BuildTaggingGraph(devX.get(i), devY.get(i), cg, dcorr, dtags, embeddings, type, pt);
+      if (type == 1) {
+        calculateNer(devY.get(i), pt, TP, FP, FN);
+      }
       dloss += TensorUtils.toScalar(cg.incrementalForward());
     }
     lm.setEval(false);
 
-    if (dloss < best) {
+    if (type == 1) {
+      P = TP.doubleValue() / (TP.doubleValue() + FP.doubleValue());
+      R = TP.doubleValue() / (TP.doubleValue() + FN.doubleValue());
+      F = 2 * P * R / (P + R);
+    }
+
+    if ((type == 0 && dloss < best) || (type == 1 && F > bestF)){
       String fileName = (type == 0 ? "pos" : "ner") + ".obj";
-      best = dloss;
+      if (type == 0) best = dloss; else bestF = F;
       SerializationUtils.save(fileName, model);
     }
     System.err.println("\n***DEV " +  (type == 0 ? "POS":  "NER") + " E = "
             + (dloss / dtags.doubleValue()) + " ppl = " + Math.exp(dloss / dtags.doubleValue())
-            + " acc = " + (dcorr.doubleValue() / dtags.doubleValue()) + " [consume = " + (new Date().getTime() - last) / 1000.0 + "s]");
+            + " acc = " + (dcorr.doubleValue() / dtags.doubleValue()) + "[consume = " + (new Date().getTime() - last) / 1000.0 + "s]" );
+    if (type == 1)
+      System.err.println("P = " + P + " R = " + R + " F = " + F);
   }
 
   public static void runOnTest(LSTMLanguageModelForMultiTask lm, Model model, Vector<Vector<Integer>> devX,
@@ -303,16 +370,35 @@ public class MultiTask {
     double dloss = 0.0;
     AtomicDouble dcorr = new AtomicDouble(0.0);
     AtomicDouble dtags = new AtomicDouble(0.0);
+    AtomicDouble TP = new AtomicDouble(0.0);
+    AtomicDouble FP = new AtomicDouble(0.0);
+    AtomicDouble FN = new AtomicDouble(0.0);
+    double P = 0.0;
+    double R = 0.0;
+    double F = 0.0;
+
     lm.setEval(true);
     for (int i = 0; i < devX.size(); ++i) {
       ComputationGraph cg = new ComputationGraph();
-      lm.BuildTaggingGraph(devX.get(i), devY.get(i), cg, dcorr, dtags, embeddings, type);
+      Vector<Integer> pt = new Vector<Integer>();
+      lm.BuildTaggingGraph(devX.get(i), devY.get(i), cg, dcorr, dtags, embeddings, type, pt);
+      if (type == 1) {
+        calculateNer(devY.get(i), pt, TP, FP, FN);
+      }
       dloss += TensorUtils.toScalar(cg.incrementalForward());
     }
+    if (type == 1) {
+      P = TP.doubleValue() / (TP.doubleValue() + FP.doubleValue());
+      R = TP.doubleValue() / (TP.doubleValue() + FN.doubleValue());
+      F = 2 * P * R / (P + R);
+    }
+
     lm.setEval(false);
     System.err.println("\n***TEST " +  (type == 0 ? "POS":  "NER") +"E = "
             + (dloss / dtags.doubleValue()) + " ppl = " + Math.exp(dloss / dtags.doubleValue())
             + " acc = " + (dcorr.doubleValue() / dtags.doubleValue()) + " [consume = " + (new Date().getTime() - last) / 1000.0 + "s]");
+    if (type == 1)
+      System.err.println("P = " + P + " R = " + R + " F = " + F);
   }
 
 
@@ -367,7 +453,7 @@ public class MultiTask {
     System.err.println("Reading embedding data from "  + embeddingName + "...") ;
     readEmbedding(embeddingName);
 
-    int maxIteration = 10;
+    int maxIteration = 5;
     int numInstances = trainPosX.size() + trainNerX.size(); //Math.min(2000, trainX.size());
     if (args.length >= 8) {
       maxIteration = Integer.parseInt(args[6]);
@@ -389,7 +475,7 @@ public class MultiTask {
     LSTMLanguageModelForMultiTask.INPUT_DIM = 100;
     LSTMLanguageModelForMultiTask.TAG_SIZE = new int[]{posTags.size(), nerTags.size()};
     LSTMLanguageModelForMultiTask lm = new LSTMLanguageModelForMultiTask(model);
-    //SerializationUtils.loadModel("pos_ner.obj", model);
+    //SerializationUtils.loadModel("ner.obj", model);
     Vector<Integer> order = new Vector<Integer>();
     for (int i = 0; i < trainPosX.size() + trainNerX.size(); i++)
       order.addElement(i);
@@ -405,15 +491,16 @@ public class MultiTask {
         int index = order.get(i);
         ComputationGraph cg = new ComputationGraph();
         if (index < trainPosX.size()) {
-          lm.BuildTaggingGraph(trainPosX.get(index), trainPosY.get(index), cg, correct, ttags, embeddings, 0);
+          lm.BuildTaggingGraph(trainPosX.get(index), trainPosY.get(index), cg, correct, ttags, embeddings, 0, null);
         } else {
-          lm.BuildTaggingGraph(trainNerX.get(index - trainPosX.size()), trainNerY.get(index - trainPosX.size()), cg, correct, ttags, embeddings, 1);
+          lm.BuildTaggingGraph(trainNerX.get(index - trainPosX.size()), trainNerY.get(index - trainPosX.size()),
+                  cg, correct, ttags, embeddings, 1, null);
         }
         loss += TensorUtils.toScalar(cg.incrementalForward());
         cg.backward();
         sgd.update(1.0);
 
-        if (i + iteration > 0 && i % 3000 == 0) {
+        if (i + iteration > 0 && i % 2500 == 0) {
           runOnDev(lm, model, devPosX, devPosY, 0);
           runOnDev(lm, model, devNerX, devNerY, 1);
         }
